@@ -12,13 +12,13 @@
         <meta name="author" content="Taylor Cohron">
       
       
-        <link rel="canonical" href="https://docs.scryme.app/getting-started/configuration/">
+        <link rel="canonical" href="https://docs.scryme.app/getting-started/kubernetes/">
       
       
-        <link rel="prev" href="../self-hosting/">
+        <link rel="prev" href="../configuration/">
       
       
-        <link rel="next" href="../kubernetes/">
+        <link rel="next" href="../demo/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Configuration - scryme Documentation</title>
+        <title>Deploy on Kubernetes - scryme Documentation</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#configuration" class="md-skip">
+        <a href="#deploy-on-kubernetes" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Configuration
+              Deploy on Kubernetes
             
           </span>
         </div>
@@ -457,6 +457,27 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -473,7 +494,7 @@
           
   
   <span class="md-ellipsis">
-    Configuration
+    Deploy on Kubernetes
   </span>
   
 
@@ -484,7 +505,7 @@
         
   
   <span class="md-ellipsis">
-    Configuration
+    Deploy on Kubernetes
   </span>
   
 
@@ -506,36 +527,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#common-variables" class="md-nav__link">
+  <a href="#what-gets-deployed" class="md-nav__link">
     <span class="md-ellipsis">
-      Common variables
+      What gets deployed
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#database-variables" class="md-nav__link">
+  <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
-      Database variables
+      Prerequisites
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#other-backend-variables" class="md-nav__link">
+  <a href="#deploy" class="md-nav__link">
     <span class="md-ellipsis">
-      Other backend variables
+      Deploy
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#scryfall-api-politeness" class="md-nav__link">
+  <a href="#expose-with-cloudflare-tunnel" class="md-nav__link">
     <span class="md-ellipsis">
-      Scryfall API politeness
+      Expose with Cloudflare Tunnel
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pin-a-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pin a version
     </span>
   </a>
   
@@ -545,27 +575,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../kubernetes/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Deploy on Kubernetes
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -934,36 +943,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#common-variables" class="md-nav__link">
+  <a href="#what-gets-deployed" class="md-nav__link">
     <span class="md-ellipsis">
-      Common variables
+      What gets deployed
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#database-variables" class="md-nav__link">
+  <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
-      Database variables
+      Prerequisites
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#other-backend-variables" class="md-nav__link">
+  <a href="#deploy" class="md-nav__link">
     <span class="md-ellipsis">
-      Other backend variables
+      Deploy
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#scryfall-api-politeness" class="md-nav__link">
+  <a href="#expose-with-cloudflare-tunnel" class="md-nav__link">
     <span class="md-ellipsis">
-      Scryfall API politeness
+      Expose with Cloudflare Tunnel
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pin-a-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pin a version
     </span>
   </a>
   
@@ -987,150 +1005,70 @@
   
 
 
-<h1 id="configuration">Configuration</h1>
-<p>scryme is configured through environment variables. Compose-level variables (<code>POSTGRES_PASSWORD</code>,
-<code>SCRYME_PORT</code>) are read by <code>docker-compose.yml</code>; the rest are read by the backend and are prefixed
-with <code>SCRYME_</code>.</p>
-<h2 id="common-variables">Common variables</h2>
-<table>
-<thead>
-<tr>
-<th>Variable</th>
-<th>Default</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>POSTGRES_PASSWORD</code></td>
-<td><code>scryme</code></td>
-<td>PostgreSQL password</td>
-</tr>
-<tr>
-<td><code>SCRYME_PORT</code></td>
-<td><code>8080</code></td>
-<td>Host port for the web UI (nginx)</td>
-</tr>
-<tr>
-<td><code>SCRYME_READ_ONLY</code></td>
-<td><code>false</code></td>
-<td>Demo mode — disables uploads/admin mutations and shows a banner</td>
-</tr>
-</tbody>
-</table>
-<h2 id="database-variables">Database variables</h2>
-<p>Provide the connection as <strong>discrete parts</strong> (recommended) and scryme assembles the URL with the
-password URL-encoded — so the password may safely contain <code>@</code>, <code>:</code>, <code>/</code>, and other special
-characters. Alternatively, set <code>SCRYME_DATABASE_URL</code> directly to override the parts.</p>
-<table>
-<thead>
-<tr>
-<th>Variable</th>
-<th>Default</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SCRYME_DB_HOST</code></td>
-<td><code>localhost</code></td>
-<td>Database host</td>
-</tr>
-<tr>
-<td><code>SCRYME_DB_PORT</code></td>
-<td><code>5432</code></td>
-<td>Database port</td>
-</tr>
-<tr>
-<td><code>SCRYME_DB_USER</code></td>
-<td><code>scryme</code></td>
-<td>Database user</td>
-</tr>
-<tr>
-<td><code>SCRYME_DB_PASSWORD</code></td>
-<td><code>scryme</code></td>
-<td>Database password (any characters; encoded automatically)</td>
-</tr>
-<tr>
-<td><code>SCRYME_DB_NAME</code></td>
-<td><code>scryme</code></td>
-<td>Database name</td>
-</tr>
-<tr>
-<td><code>SCRYME_DATABASE_URL</code></td>
-<td><em>(assembled)</em></td>
-<td>Full async URL; overrides the parts above when set</td>
-</tr>
-</tbody>
-</table>
-<p>The bundled <code>docker-compose.yml</code> already wires these to the <code>postgres</code> service using
-<code>POSTGRES_PASSWORD</code>.</p>
-<h2 id="other-backend-variables">Other backend variables</h2>
-<table>
-<thead>
-<tr>
-<th>Variable</th>
-<th>Default</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SCRYME_DATA_DIR</code></td>
-<td><code>/data</code></td>
-<td>Where bulk files and the image cache live</td>
-</tr>
-<tr>
-<td><code>SCRYME_IMAGE_CACHE_DIR</code></td>
-<td><code>/data/images</code></td>
-<td>Cached card images directory (served at <code>/images</code>)</td>
-</tr>
-<tr>
-<td><code>SCRYME_BULK_REFRESH_MIN_HOURS</code></td>
-<td><code>24</code></td>
-<td>Minimum hours between Scryfall bulk re-downloads</td>
-</tr>
-<tr>
-<td><code>SCRYME_ENVIRONMENT</code></td>
-<td><code>development</code></td>
-<td><code>development</code> / <code>production</code> / <code>test</code></td>
-</tr>
-<tr>
-<td><code>SCRYME_DEBUG</code></td>
-<td><code>false</code></td>
-<td>Verbose SQL logging</td>
-</tr>
-</tbody>
-</table>
-<h2 id="scryfall-api-politeness">Scryfall API politeness</h2>
-<p>These rarely need changing — they keep scryme within
-<a href="https://scryfall.com/docs/api">Scryfall's API policy</a>:</p>
-<table>
-<thead>
-<tr>
-<th>Variable</th>
-<th>Default</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SCRYME_SCRYFALL_USER_AGENT</code></td>
-<td><code>scryme/&lt;version&gt; (+repo url)</code></td>
-<td>Identifies scryme to Scryfall (required header)</td>
-</tr>
-<tr>
-<td><code>SCRYME_SCRYFALL_MIN_REQUEST_INTERVAL</code></td>
-<td><code>0.1</code></td>
-<td>Seconds between requests (≤ 10/s)</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Always keep a descriptive <code>User-Agent</code> and stay under 10 requests per second. A <code>429</code> response
-locks API access for ~30 seconds; scryme backs off automatically.</p>
+<h1 id="deploy-on-kubernetes">Deploy on Kubernetes</h1>
+<p>The official demo at <strong><a href="https://demo.scryme.app">demo.scryme.app</a></strong> runs on k3s, fronted by an
+in-cluster Cloudflare Tunnel. The manifests live in the repo under
+<a href="https://github.com/untraceablez/scryme/tree/main/deploy/k8s/demo"><code>deploy/k8s/demo/</code></a> and are
+bundled with kustomize.</p>
+<h2 id="what-gets-deployed">What gets deployed</h2>
+<ul>
+<li><strong>PostgreSQL</strong> — a Deployment with a PVC.</li>
+<li><strong>scryme</strong> — a Deployment that pulls the published image
+  <code>ghcr.io/untraceablez/scryme</code> and persists card data on a PVC.</li>
+<li>An <strong>init container</strong> that, on first boot, waits for Postgres, runs migrations, ingests the
+  Scryfall bulk file, and seeds a sample collection (<code>alembic upgrade</code> → <code>ingest</code> → <code>seed-demo</code>).
+  Persistent Postgres + the 24h cache guard make later restarts fast.</li>
+<li>The backend runs with <code>SCRYME_READ_ONLY=true</code>, so uploads and admin mutations are disabled and
+  the demo banner is shown.</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>A default StorageClass supporting <code>ReadWriteOnce</code> (k3s <code>local-path</code> works).</li>
+<li>
+<p>The published image. Make the <code>ghcr.io/untraceablez/scryme</code> package <strong>public</strong>, or create a pull
+  secret named <code>ghcr-pull</code> from a <code>read:packages</code> token:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>scryme-demo<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>docker-registry<span class="w"> </span>ghcr-pull<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>--docker-server<span class="o">=</span>ghcr.io<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span>--docker-username<span class="o">=</span>&lt;you&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span>--docker-password<span class="o">=</span>&lt;read:packages<span class="w"> </span>PAT&gt;
+</code></pre></div>
+</li>
+</ul>
+<h2 id="deploy">Deploy</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>deploy/k8s/demo/namespace.yaml
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># One password, used by Postgres and by the app (which URL-encodes it).</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>cp<span class="w"> </span>deploy/k8s/demo/examples/secret.example.yaml<span class="w"> </span>deploy/k8s/demo/secret.yaml
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nv">$EDITOR</span><span class="w"> </span>deploy/k8s/demo/secret.yaml<span class="w">          </span><span class="c1"># set POSTGRES_PASSWORD</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>deploy/k8s/demo/secret.yaml
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>deploy/k8s/demo<span class="w">             </span><span class="c1"># use -k (kustomize), not -f</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>scryme-demo<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>deploy/scryme-demo<span class="w"> </span>-c<span class="w"> </span>ingest-and-seed
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Pod runs as non-root</p>
+<p>The Deployment sets <code>securityContext.fsGroup: 1000</code> so the non-root container can write the
+<code>/data</code> PVC. The DB password is supplied as a discrete part (<code>SCRYME_DB_PASSWORD</code>), so it may
+contain any characters — see <a href="../configuration/">Configuration</a>.</p>
 </div>
+<h2 id="expose-with-cloudflare-tunnel">Expose with Cloudflare Tunnel</h2>
+<p>Add an ingress rule pointing at the Service, then publish the DNS route:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">ingress</span><span class="p">:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">demo.scryme.app</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">service</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://scryme-demo.scryme-demo.svc.cluster.local:8000</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">service</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http_status:404</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>cloudflared<span class="w"> </span>tunnel<span class="w"> </span>route<span class="w"> </span>dns<span class="w"> </span>&lt;your-tunnel&gt;<span class="w"> </span>demo.scryme.app
+</code></pre></div>
+<p>Cloudflare terminates TLS at the edge, so the tunnel targets the Service over plain HTTP.</p>
+<h2 id="pin-a-version">Pin a version</h2>
+<p><code>kustomization.yaml</code> tracks the <code>latest</code> tag. To pin a release, set <code>newTag</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">images</span><span class="p">:</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/untraceablez/scryme</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">newTag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v0.1.0</span>
+</code></pre></div>
+<p>See the <a href="https://github.com/untraceablez/scryme/blob/main/deploy/k8s/demo/README.md">deploy README</a>
+for troubleshooting (including resetting the database volume).</p>
 
 
 
@@ -1198,7 +1136,7 @@ locks API access for ~30 seconds; scryme backs off automatically.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../self-hosting/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Self-Hosting">
+          <a href="../configuration/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Configuration">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -1208,20 +1146,20 @@ locks API access for ~30 seconds; scryme backs off automatically.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Self-Hosting
+                Configuration
               </div>
             </div>
           </a>
         
         
           
-          <a href="../kubernetes/" class="md-footer__link md-footer__link--next" aria-label="Next: Deploy on Kubernetes">
+          <a href="../demo/" class="md-footer__link md-footer__link--next" aria-label="Next: Public Demo">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Deploy on Kubernetes
+                Public Demo
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -26,6 +26,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://docs.scryme.app/getting-started/kubernetes/</loc>
+         <lastmod>2026-06-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://docs.scryme.app/getting-started/self-hosting/</loc>
          <lastmod>2026-06-25</lastmod>
          <changefreq>daily</changefreq>
