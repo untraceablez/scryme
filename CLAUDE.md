@@ -63,8 +63,16 @@ python -m src.cli backfill-images          # cache images for owned cards
 # or via HTTP:  POST /admin/ingest   GET /admin/status
 ```
 
+## Search engine (`src/search/`)
+
+`lexer` → `parser` (AST) → `compiler` (SQLAlchemy over `cards`) → `engine.run_search`.
+Supported filters: name, `o:`/oracle, `t:`/type, `c:`/color, `id:`/identity, `m:`/mana,
+`mv`/`cmc`, `pow`/`tou`/`loy`, `r:`/rarity, `s:`/set, `cn:`, `is:`, `f:`/format, `usd`/`eur`/`tix`,
+`lang`, `kw:`, `year`/`date`, `layout`, `a:`/artist; boolean `OR`/`AND`/`-`/parentheses; `/regex/`
+(Postgres `~*`, text fields only). `:` means `=` for numeric fields. Unknown keywords raise
+`SearchError`. Default scope is the owned collection; `scope=all` searches every card.
+
 ## Status
 
-Phased build: Phase 0 (scaffold + CI) and Phase 1 (Scryfall ingestion + image cache) are done.
-`src/scryfall/` holds the policy-compliant client, bulk ingest, and image cache; the daily
-refresh runs in-process via APScheduler (`src/scheduler.py`). Next: Phase 2 search engine.
+Phases 0–2 done: scaffold + CI, Scryfall ingestion + image cache, and the search engine + HTMX
+UI (`/search`, live results grid with a collection/all toggle). Next: Phase 3 collection upload.
