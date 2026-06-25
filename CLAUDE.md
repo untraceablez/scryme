@@ -83,5 +83,7 @@ by writing a module in `importers/` with `detect`/`parse` and `@register`, then 
 
 ## Status
 
-Phases 0–3 done: scaffold + CI, Scryfall ingestion + image cache, search engine + HTMX UI, and
-ManaBox upload with the preview→confirm merge engine. Next: Phase 4 Dragon Shield + Delver parsers.
+Phases 0–4 done: scaffold + CI, Scryfall ingestion + image cache, search engine + HTMX UI, and
+collection upload with ManaBox, Dragon Shield, and Delver Lens parsers (Dragon Shield matches by
+set+collector number; Delver prefers Scryfall ID). Next: Phase 5 polish (mobile, demo seed,
+expanded syntax).

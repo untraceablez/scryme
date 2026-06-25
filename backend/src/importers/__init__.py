@@ -5,8 +5,9 @@ matching resolves each row to a Scryfall card; the two-phase service stages a pr
 applies a chosen :class:`~src.importers.merge.MergeStrategy`.
 """
 
-# Importing the parser modules registers them in the format-detection registry.
-from src.importers import manabox  # noqa: F401,E402  (import for registration side effect)
+# Importing the parser modules registers them in the format-detection registry. detect() rules
+# are mutually exclusive, so registration order does not affect which parser claims a file.
+from src.importers import delver, dragonshield, manabox  # noqa: F401  (register parsers)
 from src.importers.base import ImportRow, detect_format
 from src.importers.merge import MergeStrategy
 
