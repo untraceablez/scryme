@@ -1,0 +1,4 @@
+/* Project-specific styles layered on top of Tailwind. Kept minimal for the scaffold. */
+:root {
+  color-scheme: dark;
+}

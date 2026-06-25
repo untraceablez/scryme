@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+*.log
+
+# SonarQube
+.scannerwork/
+
+# Local data / caches (never commit personal collections or downloaded bulk data)
+data/
+image-cache/
+*.dlens
+/ManaBox_Collection.csv
+tests/fixtures/*_full.csv
+
+# Node (only used for optional Tailwind build)
+node_modules/
+
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store
+*.swp
