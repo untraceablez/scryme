@@ -8,11 +8,14 @@ Cloudflare Tunnel at **demo.scryme.app**.
 | File | Purpose |
 | --- | --- |
 | `namespace.yaml` | `scryme-demo` namespace |
-| `secret.example.yaml` | template holding the single DB password (copy to `secret.yaml`) |
 | `postgres.yaml` | PostgreSQL Deployment + PVC + Service |
 | `backend.yaml` | scryme Deployment (GHCR image) + data PVC + Service + ConfigMap |
 | `kustomization.yaml` | bundles namespace + postgres + backend |
-| `cloudflared-ingress.example.yaml` | tunnel ingress rule snippet |
+| `examples/secret.example.yaml` | template holding the single DB password (copy to `secret.yaml`) |
+| `examples/cloudflared-ingress.example.yaml` | tunnel ingress rule snippet |
+
+> Deploy with **`kubectl apply -k .`** (kustomize), not `apply -f .`. The `examples/` files are
+> templates, not resources to apply directly. `-k` applies only the bundled namespace/postgres/backend.
 
 The backend runs with `SCRYME_READ_ONLY=true`, so uploads and admin mutations are disabled and a
 demo banner is shown. An init container loads card data on first boot: it waits for Postgres,
@@ -48,7 +51,7 @@ The deployment references an `imagePullSecret` named `ghcr-pull`. You have two o
 ```bash
 # 1. Create the namespace + DB secret (do NOT commit secret.yaml)
 kubectl apply -f namespace.yaml
-cp secret.example.yaml secret.yaml
+cp examples/secret.example.yaml secret.yaml
 $EDITOR secret.yaml            # set a real POSTGRES_PASSWORD
 kubectl apply -f secret.yaml
 
@@ -64,7 +67,7 @@ kubectl -n scryme-demo rollout status deploy/scryme-demo
 
 ## Expose via Cloudflare Tunnel
 
-Add the rule from `cloudflared-ingress.example.yaml` to your tunnel config, then:
+Add the rule from `examples/cloudflared-ingress.example.yaml` to your tunnel config, then:
 
 ```bash
 cloudflared tunnel route dns <your-tunnel> demo.scryme.app
