@@ -9,8 +9,14 @@ Force test mode *before* importing the app so the engine is built with NullPool 
 
 import asyncio
 import os
+import tempfile
 
 os.environ.setdefault("SCRYME_ENVIRONMENT", "test")
+# Point data/image dirs at a writable temp location (the default /data is root-owned and not
+# writable on CI runners).
+_tmp_data = os.path.join(tempfile.gettempdir(), "scryme-test")
+os.environ.setdefault("SCRYME_DATA_DIR", _tmp_data)
+os.environ.setdefault("SCRYME_IMAGE_CACHE_DIR", os.path.join(_tmp_data, "images"))
 
 import pytest  # noqa: E402
 import pytest_asyncio  # noqa: E402
