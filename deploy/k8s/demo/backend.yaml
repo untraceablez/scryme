@@ -43,6 +43,7 @@ spec:
           command: ["sh", "-c"]
           args:
             - |
+              set -e
               until python -c "import socket; socket.create_connection(('scryme-demo-postgres', 5432), 3)" 2>/dev/null; do
                 echo "waiting for postgres..."; sleep 2;
               done
