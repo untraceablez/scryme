@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}scryme{% endblock %}</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+  <!-- Tailwind via CDN keeps the app a single pure-Python service; swap for a build step later. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <link rel="stylesheet" href="/static/app.css" />
+</head>
+<body class="h-full bg-slate-950 text-slate-100 antialiased">
+  {% if read_only %}
+  <div class="bg-amber-500/90 text-slate-900 text-center text-sm py-1 font-medium">
+    Demo mode &mdash; this is a shared, read-only sandbox collection.
+  </div>
+  {% endif %}
+  <main class="min-h-full">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

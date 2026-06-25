@@ -1,0 +1,35 @@
+[project]
+name = "scryme"
+version = "0.0.1"
+description = "Self-hostable, Scryfall-like search for your own Magic: The Gathering collection."
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = [
+    "--strict-markers",
+    "--cov=src",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-report=xml",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["src/alembic/*", "tests/*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W"]
+ignore = ["B008"]  # FastAPI uses function calls (Depends) in argument defaults
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
