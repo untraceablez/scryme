@@ -7,11 +7,11 @@
       <span class="text-accent">scry</span>me
     </a>
     <form
-      class="order-last w-full sm:order-none sm:w-auto flex-1 flex gap-2"
+      class="order-last w-full sm:order-none sm:w-auto flex-1 flex flex-wrap gap-2"
       hx-get="/search"
       hx-target="#results"
       hx-push-url="true"
-      hx-trigger="submit, keyup changed delay:350ms from:input[name=q], change from:select[name=scope]"
+      hx-trigger="submit, keyup changed delay:350ms from:input[name=q], change"
     >
       <input
         type="search"
@@ -26,6 +26,20 @@
         class="rounded-full bg-surface border border-edge px-3 py-2.5 text-sm">
         <option value="collection" {% if scope == 'collection' %}selected{% endif %}>My collection</option>
         <option value="all" {% if scope == 'all' %}selected{% endif %}>All cards</option>
+      </select>
+      <select name="sort" title="Sort by"
+        class="rounded-full bg-surface border border-edge px-3 py-2.5 text-sm">
+        <option value="name" {% if sort == 'name' %}selected{% endif %}>Name</option>
+        <option value="mv" {% if sort == 'mv' %}selected{% endif %}>Mana value</option>
+        <option value="price" {% if sort == 'price' %}selected{% endif %}>Price (USD)</option>
+        <option value="set" {% if sort == 'set' %}selected{% endif %}>Set</option>
+        <option value="rarity" {% if sort == 'rarity' %}selected{% endif %}>Rarity</option>
+        <option value="released" {% if sort == 'released' %}selected{% endif %}>Released</option>
+      </select>
+      <select name="dir" title="Direction"
+        class="rounded-full bg-surface border border-edge px-3 py-2.5 text-sm">
+        <option value="asc" {% if dir != 'desc' %}selected{% endif %}>Asc ↑</option>
+        <option value="desc" {% if dir == 'desc' %}selected{% endif %}>Desc ↓</option>
       </select>
     </form>
     <a href="/upload"

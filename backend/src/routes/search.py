@@ -18,7 +18,7 @@ from src.models import Card
 from src.scryfall.images import ImageCache
 from src.scryfall.mapping import image_url as cdn_image_url
 from src.search import SearchError, SearchScope
-from src.search.engine import run_search
+from src.search.engine import DEFAULT_SORT, SORT_KEYS, run_search
 from src.templating import templates
 
 router = APIRouter(tags=["search"])
@@ -55,12 +55,18 @@ async def search(
     q: str = "",
     scope: str = SearchScope.COLLECTION.value,
     page: int = 1,
+    sort: str = DEFAULT_SORT,
+    dir: str = "asc",
     session: AsyncSession = Depends(get_session),
 ) -> HTMLResponse:
     scope_enum = SearchScope.ALL if scope == SearchScope.ALL.value else SearchScope.COLLECTION
-    ctx: dict = {"q": q, "scope": scope_enum.value}
+    sort = sort if sort in SORT_KEYS else DEFAULT_SORT
+    descending = dir == "desc"
+    ctx: dict = {"q": q, "scope": scope_enum.value, "sort": sort, "dir": dir}
     try:
-        result = await run_search(session, q, scope=scope_enum, page=page)
+        result = await run_search(
+            session, q, scope=scope_enum, page=page, sort=sort, descending=descending
+        )
         ctx["result"] = result
         ctx["views"] = _to_views(result)
     except SearchError as exc:
