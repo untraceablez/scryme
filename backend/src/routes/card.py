@@ -1,0 +1,140 @@
+"""Card detail page.
+
+A dedicated page for a single printing: large art, full oracle text, prices, format
+legalities, the stacks you own, and the card's other printings. Rulings are loaded lazily
+from Scryfall (HTMX) so the page renders instantly and stays useful offline if the fetch fails.
+"""
+
+from __future__ import annotations
+
+import uuid
+
+from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import HTMLResponse
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.db import get_session
+from src.models import Card, CollectionCard
+from src.scryfall.client import ScryfallClient, ScryfallError
+from src.scryfall.images import ImageCache
+from src.scryfall.mapping import image_url as cdn_image_url
+from src.templating import templates
+
+router = APIRouter(tags=["card"])
+_cache = ImageCache()
+
+# Formats worth showing, in display order (Scryfall reports ~20; this is the useful subset).
+LEGALITY_FORMATS = [
+    "standard", "pioneer", "modern", "legacy", "vintage",
+    "commander", "pauper", "brawl", "historic", "oathbreaker",
+]
+
+# Lazily-fetched rulings cached per printing for the process lifetime (single-user, polite).
+_rulings_cache: dict[str, list[dict]] = {}
+
+
+def _image(card: Card, size: str = "normal") -> str:
+    sid = str(card.scryfall_id)
+    if size == "normal" and _cache.is_cached(sid):
+        return _cache.url_path(sid)
+    return cdn_image_url(card.raw, size) or cdn_image_url(card.raw) or ""
+
+
+async def _load_card(session: AsyncSession, scryfall_id: str) -> Card:
+    try:
+        sid = uuid.UUID(scryfall_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail="Card not found.") from exc
+    card = await session.get(Card, sid)
+    if card is None:
+        raise HTTPException(status_code=404, detail="Card not found.")
+    return card
+
+
+@router.get("/card/{scryfall_id}", response_class=HTMLResponse)
+async def card_detail(
+    request: Request,
+    scryfall_id: str,
+    session: AsyncSession = Depends(get_session),
+) -> HTMLResponse:
+    card = await _load_card(session, scryfall_id)
+
+    owned = list(
+        (
+            await session.execute(
+                select(CollectionCard)
+                .where(CollectionCard.scryfall_id == card.scryfall_id)
+                .order_by(CollectionCard.finish, CollectionCard.language)
+            )
+        )
+        .scalars()
+        .all()
+    )
+
+    printings: list[Card] = []
+    if card.oracle_id is not None:
+        printings = list(
+            (
+                await session.execute(
+                    select(Card)
+                    .where(Card.oracle_id == card.oracle_id)
+                    .where(Card.scryfall_id != card.scryfall_id)
+                    .order_by(Card.released_at.desc().nulls_last())
+                    .limit(24)
+                )
+            )
+            .scalars()
+            .all()
+        )
+
+    prices = card.prices or {}
+    price_rows = [
+        (label, prices.get(key))
+        for label, key in (("USD", "usd"), ("USD foil", "usd_foil"), ("EUR", "eur"), ("TIX", "tix"))
+        if prices.get(key)
+    ]
+    legalities = card.legalities or {}
+    legality_rows = [(fmt, legalities.get(fmt, "not_legal")) for fmt in LEGALITY_FORMATS]
+
+    return templates.TemplateResponse(
+        request,
+        "card_detail.html",
+        {
+            "card": card,
+            "faces": card.raw.get("card_faces") or [],
+            "image": _image(card),
+            "scryfall_uri": card.raw.get("scryfall_uri", "#"),
+            "artist": card.raw.get("artist"),
+            "owned": owned,
+            "owned_total": sum(s.quantity for s in owned),
+            "printings": [(p, _image(p, "small")) for p in printings],
+            "price_rows": price_rows,
+            "legality_rows": legality_rows,
+        },
+    )
+
+
+@router.get("/card/{scryfall_id}/rulings", response_class=HTMLResponse)
+async def card_rulings(
+    request: Request,
+    scryfall_id: str,
+    session: AsyncSession = Depends(get_session),
+) -> HTMLResponse:
+    card = await _load_card(session, scryfall_id)
+    rulings: list[dict] | None = _rulings_cache.get(scryfall_id)
+    if rulings is None:
+        uri = card.raw.get("rulings_uri")
+        try:
+            if not uri:
+                raise ScryfallError("no rulings_uri")
+            async with ScryfallClient() as client:
+                payload = await client.get_json(uri)
+            rulings = payload.get("data", [])
+            _rulings_cache[scryfall_id] = rulings
+        except ScryfallError:
+            rulings = None  # leave uncached so a later view can retry
+
+    return templates.TemplateResponse(
+        request, "_card_rulings.html", {"rulings": rulings}
+    )

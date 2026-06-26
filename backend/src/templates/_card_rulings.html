@@ -1,0 +1,15 @@
+{# Lazily-loaded rulings (fetched from Scryfall). `rulings` is None when the fetch failed. #}
+{% if rulings is none %}
+  <p class="text-sm text-muted">Rulings couldn't be loaded right now.</p>
+{% elif rulings %}
+  <ul class="space-y-2">
+    {% for r in rulings %}
+    <li class="text-sm">
+      <span class="text-muted">{{ r.published_at }}</span>
+      <span class="block">{{ r.comment }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-sm text-muted">No rulings for this card.</p>
+{% endif %}
