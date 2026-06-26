@@ -38,13 +38,13 @@
   <nav class="flex items-center justify-center gap-3 mt-6 text-sm">
     {% if result.page > 1 %}
     <button class="px-3 py-1.5 rounded bg-surface-2 hover:bg-surface-3"
-      hx-get="/search?q={{ q | urlencode }}&scope={{ scope }}&page={{ result.page - 1 }}"
+      hx-get="/search?q={{ q | urlencode }}&scope={{ scope }}&sort={{ sort }}&dir={{ dir }}&page={{ result.page - 1 }}"
       hx-target="#results" hx-push-url="true">← Prev</button>
     {% endif %}
     <span class="text-muted">{{ result.page }} / {{ result.total_pages }}</span>
     {% if result.page < result.total_pages %}
     <button class="px-3 py-1.5 rounded bg-surface-2 hover:bg-surface-3"
-      hx-get="/search?q={{ q | urlencode }}&scope={{ scope }}&page={{ result.page + 1 }}"
+      hx-get="/search?q={{ q | urlencode }}&scope={{ scope }}&sort={{ sort }}&dir={{ dir }}&page={{ result.page + 1 }}"
       hx-target="#results" hx-push-url="true">Next →</button>
     {% endif %}
   </nav>
