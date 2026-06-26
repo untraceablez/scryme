@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://docs.scryme.app/development/architecture/">
       
       
-        <link rel="prev" href="../../search/regex/">
+        <link rel="prev" href="../../features/theming/">
       
       
         <link rel="next" href="../contributing/">
@@ -286,6 +286,26 @@
     
   
   Searching
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../features/cards/" class="md-tabs__link">
+          
+  
+    
+  
+  Features
 
         </a>
       </li>
@@ -652,6 +672,8 @@
       
         
       
+        
+      
     
     
     
@@ -727,6 +749,191 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../search/advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Advanced Search
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Features
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/cards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Card Details & Symbols
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/decks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Decks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/binders/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Binders
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/stats/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collection Stats
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/theming/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Theming
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -761,10 +968,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -775,8 +982,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Development
           </label>
@@ -1052,6 +1259,8 @@ Jinja2 + HTMX + Tailwind. There is no separate single-page app.</p>
   <em>(card, finish, condition, language, binder)</em>.</li>
 <li><strong><code>ingest_state</code></strong> — tracks the last bulk download to honor the ≥24h cache rule.</li>
 <li><strong><code>import_staging</code></strong> — holds a parsed, matched upload between preview and confirm.</li>
+<li><strong><code>saved_search</code></strong> — named queries (query + scope + sort + direction).</li>
+<li><strong><code>deck</code> / <code>deck_card</code></strong> — decks and their lines, matched to the collection by oracle id.</li>
 </ul>
 <h2 id="backend-modules-backendsrc">Backend modules (<code>backend/src/</code>)</h2>
 <table>
@@ -1075,8 +1284,20 @@ Jinja2 + HTMX + Tailwind. There is no separate single-page app.</p>
 <td>Format registry, per-app parsers, card matching, merge strategies</td>
 </tr>
 <tr>
+<td><code>decks.py</code></td>
+<td>Decklist parsing, card resolution, ownership coverage + legality</td>
+</tr>
+<tr>
+<td><code>stats.py</code></td>
+<td>Owned-collection aggregates for the stats dashboard</td>
+</tr>
+<tr>
+<td><code>symbols.py</code></td>
+<td>Render <code>{…}</code> mana tokens and set symbols via the Mana/Keyrune fonts</td>
+</tr>
+<tr>
 <td><code>routes/</code></td>
-<td><code>health</code>, <code>home</code>, <code>search</code>, <code>upload</code>, <code>admin</code></td>
+<td><code>health</code>, <code>home</code>, <code>search</code>, <code>card</code>, <code>upload</code>, <code>export</code>, <code>saved</code>, <code>stats</code>, <code>decks</code>, <code>binders</code>, <code>admin</code></td>
 </tr>
 <tr>
 <td><code>scheduler.py</code></td>
@@ -1123,7 +1344,7 @@ come from <strong>bulk downloads</strong>, not per-card API calls.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 25, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 26, 2026</span>
   </span>
 
     
@@ -1168,7 +1389,7 @@ come from <strong>bulk downloads</strong>, not per-card API calls.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../search/regex/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Regular Expressions">
+          <a href="../../features/theming/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Theming">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -1178,7 +1399,7 @@ come from <strong>bulk downloads</strong>, not per-card API calls.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Regular Expressions
+                Theming
               </div>
             </div>
           </a>

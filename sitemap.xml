@@ -16,6 +16,31 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://docs.scryme.app/features/binders/</loc>
+         <lastmod>2026-06-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.scryme.app/features/cards/</loc>
+         <lastmod>2026-06-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.scryme.app/features/decks/</loc>
+         <lastmod>2026-06-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.scryme.app/features/stats/</loc>
+         <lastmod>2026-06-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.scryme.app/features/theming/</loc>
+         <lastmod>2026-06-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://docs.scryme.app/getting-started/configuration/</loc>
          <lastmod>2026-06-26</lastmod>
          <changefreq>daily</changefreq>
@@ -47,6 +72,11 @@
     </url>
     <url>
          <loc>https://docs.scryme.app/import/overview/</loc>
+         <lastmod>2026-06-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.scryme.app/search/advanced/</loc>
          <lastmod>2026-06-26</lastmod>
          <changefreq>daily</changefreq>
     </url>
