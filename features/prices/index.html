@@ -970,6 +970,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#acquisition-profitloss" class="md-nav__link">
+    <span class="md-ellipsis">
+      Acquisition profit/loss
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-snapshots-are-captured" class="md-nav__link">
     <span class="md-ellipsis">
       How snapshots are captured
@@ -1137,6 +1146,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#acquisition-profitloss" class="md-nav__link">
+    <span class="md-ellipsis">
+      Acquisition profit/loss
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-snapshots-are-captured" class="md-nav__link">
     <span class="md-ellipsis">
       How snapshots are captured
@@ -1164,13 +1182,28 @@
 
 
 <h1 id="price-history">Price history</h1>
-<p>The <strong>Prices</strong> page (header link or <code>/prices</code>) tracks your collection's value over time and shows
-which cards moved the most.</p>
+<p>The <strong>Prices</strong> page (header link or <code>/prices</code>) tracks your collection's value over time, shows
+which cards moved the most, and reports your acquisition profit/loss.</p>
 <ul>
+<li><strong>Acquisition P/L</strong> — for cards with a recorded purchase price, compares what you paid to the
+  current market value: total <strong>cost basis</strong>, current <strong>market value</strong>, and the <strong>unrealized
+  profit/loss</strong> (dollars and percentage), plus your biggest winners and losers.</li>
 <li><strong>Collection value over time</strong> — a bar per snapshot, with the current value highlighted.</li>
 <li><strong>Biggest movers</strong> — the top gainers and losers between the two most recent snapshots, each with
   the old → new price, the dollar change, and the percentage, linking to the card page.</li>
 </ul>
+<h2 id="acquisition-profitloss">Acquisition profit/loss</h2>
+<p>When you import a collection that includes a purchase price (ManaBox's <em>Purchase price</em>, Dragon
+Shield's <em>Price Bought</em>, or Delver Lens's price column), scryme stores it per card. The Prices page
+then compares that cost against the current Scryfall market price:</p>
+<ul>
+<li><strong>Foil-aware</strong> — foil/etched stacks are compared against the foil market price.</li>
+<li>Only cards that have <strong>both</strong> a recorded purchase price <strong>and</strong> a current market price count
+  toward the totals; everything else is reported as excluded so the numbers stay honest.</li>
+<li><strong>Winners/losers</strong> are ranked by total dollar change across the whole stack (quantity × per-card
+  change), so a small per-card gain on a big stack can outrank a large gain on a single card.</li>
+</ul>
+<p>If none of your cards carry a purchase price, the P/L section is hidden.</p>
 <h2 id="how-snapshots-are-captured">How snapshots are captured</h2>
 <p>scryme records a price snapshot automatically <strong>after each scheduled Scryfall refresh</strong> (when
 prices are freshly updated). The total is foil-aware — foil stacks are valued at the foil price.</p>
@@ -1201,7 +1234,7 @@ public demo the scheduled refresh is disabled, so snapshots don't accumulate the
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 26, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 27, 2026</span>
   </span>
 
     
