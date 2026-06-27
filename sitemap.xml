@@ -36,6 +36,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://docs.scryme.app/features/sets/</loc>
+         <lastmod>2026-06-27</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://docs.scryme.app/features/stats/</loc>
          <lastmod>2026-06-27</lastmod>
          <changefreq>daily</changefreq>
