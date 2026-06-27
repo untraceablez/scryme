@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db import get_session
-from src.prices import biggest_movers, value_series
+from src.prices import biggest_movers, collection_pl, value_series
 from src.templating import templates
 
 router = APIRouter(tags=["prices"])
@@ -21,5 +21,9 @@ async def prices(
     return templates.TemplateResponse(
         request,
         "prices.html",
-        {"series": series, "movers": await biggest_movers(session)},
+        {
+            "series": series,
+            "movers": await biggest_movers(session),
+            "pl": await collection_pl(session),
+        },
     )

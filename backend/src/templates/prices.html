@@ -1,6 +1,28 @@
 {% extends "base.html" %}
 {% block title %}Prices · scryme{% endblock %}
 
+{% macro pl_list(cards) %}
+  {% if cards %}
+  <ul class="space-y-1.5 text-sm">
+    {% for c in cards %}
+    <li class="flex items-center gap-2">
+      <a href="/card/{{ c.scryfall_id }}" class="flex-1 min-w-0 truncate hover:text-accent">
+        {{ c.name }} <span class="text-muted uppercase text-xs">{{ c.set_code }}</span>
+        {% if c.quantity > 1 %}<span class="text-muted text-xs">×{{ c.quantity }}</span>{% endif %}
+        {% if c.finish in ('foil', 'etched') %}<span class="text-amber-500 text-xs">✦</span>{% endif %}
+      </a>
+      <span class="text-right text-muted tabular-nums">${{ '{:,.2f}'.format(c.cost) }} → ${{ '{:,.2f}'.format(c.market) }}</span>
+      <span class="w-24 text-right tabular-nums font-medium {% if c.total_delta > 0 %}text-emerald-500{% else %}text-rose-500{% endif %}">
+        {{ '+' if c.total_delta > 0 else '' }}{{ '{:,.2f}'.format(c.total_delta) }} ({{ c.pct }}%)
+      </span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-sm text-muted">None.</p>
+  {% endif %}
+{% endmacro %}
+
 {% macro mover_list(movers) %}
   {% if movers %}
   <ul class="space-y-1.5 text-sm">
@@ -30,6 +52,48 @@
     <h1 class="text-lg font-semibold">Price history</h1>
     <a href="/stats" class="ml-auto text-sm text-muted hover:text-fg">Stats →</a>
   </header>
+
+  {# Acquisition profit/loss — purchase price vs. current market #}
+  {% if pl.available %}
+  <section class="mb-8">
+    <h2 class="text-sm font-semibold text-muted mb-3 uppercase tracking-wide">Acquisition P/L</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+      <div class="rounded-xl bg-surface ring-1 ring-edge p-4">
+        <div class="text-xs text-muted">Cost basis</div>
+        <div class="text-2xl font-bold">${{ '{:,.2f}'.format(pl.cost_basis) }}</div>
+      </div>
+      <div class="rounded-xl bg-surface ring-1 ring-edge p-4">
+        <div class="text-xs text-muted">Market value</div>
+        <div class="text-2xl font-bold">${{ '{:,.2f}'.format(pl.market_value) }}</div>
+      </div>
+      <div class="rounded-xl bg-surface ring-1 ring-edge p-4 col-span-2 md:col-span-1">
+        <div class="text-xs text-muted">Unrealized P/L</div>
+        <div class="text-2xl font-bold {% if pl.unrealized >= 0 %}text-emerald-500{% else %}text-rose-500{% endif %}">
+          {{ '+' if pl.unrealized >= 0 else '−' }}${{ '{:,.2f}'.format(pl.unrealized | abs) }}
+          <span class="text-base font-medium">({{ '+' if pl.pct >= 0 else '' }}{{ pl.pct }}%)</span>
+        </div>
+      </div>
+    </div>
+    <p class="text-xs text-muted mb-4">
+      Across {{ '{:,}'.format(pl.priced_cards) }} card{{ '' if pl.priced_cards == 1 else 's' }}
+      with a recorded purchase price.
+      {% if pl.unpriced_stacks %}
+        {{ '{:,}'.format(pl.unpriced_stacks) }} stack{{ '' if pl.unpriced_stacks == 1 else 's' }}
+        without a purchase or current price {{ 'is' if pl.unpriced_stacks == 1 else 'are' }} excluded.
+      {% endif %}
+    </p>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="rounded-xl bg-surface ring-1 ring-edge p-4">
+        <h3 class="text-sm font-semibold text-emerald-500 mb-2 uppercase tracking-wide">▲ Biggest winners</h3>
+        {{ pl_list(pl.winners) }}
+      </div>
+      <div class="rounded-xl bg-surface ring-1 ring-edge p-4">
+        <h3 class="text-sm font-semibold text-rose-500 mb-2 uppercase tracking-wide">▼ Biggest losers</h3>
+        {{ pl_list(pl.losers) }}
+      </div>
+    </div>
+  </section>
+  {% endif %}
 
   {% if not series %}
   <div class="text-muted py-16 text-center">
