@@ -82,6 +82,82 @@ async def value_series(session: AsyncSession, limit: int = 90) -> list[PriceSnap
 
 
 @dataclass
+class ChartPoint:
+    x: float
+    y: float
+    value: float
+    date: str
+
+
+@dataclass
+class ValueChart:
+    """SVG-ready coordinates for a value-over-time line chart, built from `value_series`."""
+
+    points: list[ChartPoint] = field(default_factory=list)
+    polyline: str = ""   # "x,y x,y ..." for <polyline points=...>
+    area: str = ""       # path data filling under the line down to the baseline
+    min_value: float = 0.0
+    max_value: float = 0.0
+    current: float = 0.0
+    width: int = 0
+    height: int = 0
+
+    @property
+    def available(self) -> bool:
+        return bool(self.points)
+
+    @property
+    def has_trend(self) -> bool:
+        return len(self.points) >= 2
+
+    @property
+    def first_date(self) -> str:
+        return self.points[0].date if self.points else ""
+
+    @property
+    def last_date(self) -> str:
+        return self.points[-1].date if self.points else ""
+
+
+def build_value_chart(
+    series: list[PriceSnapshot], width: int = 1000, height: int = 140, pad: int = 8
+) -> ValueChart:
+    """Project a (chronological) snapshot series onto an SVG viewBox.
+
+    Higher values map nearer the top (SVG y grows downward). A flat series sits on the midline;
+    a single snapshot yields one centered point with no trend line.
+    """
+    pts = [(float(s.total_usd or 0), s.captured_at) for s in series]
+    if not pts:
+        return ValueChart(width=width, height=height)
+
+    values = [v for v, _ in pts]
+    vmin, vmax = min(values), max(values)
+    flat = vmax == vmin
+    span = vmax - vmin
+    n = len(pts)
+    inner_w = width - 2 * pad
+    inner_h = height - 2 * pad
+
+    coords: list[ChartPoint] = []
+    for i, (v, dt) in enumerate(pts):
+        x = pad + (inner_w * i / (n - 1) if n > 1 else inner_w / 2)
+        norm = 0.5 if flat else (v - vmin) / span  # flat series sits on the midline
+        y = pad + inner_h * (1 - norm)
+        coords.append(ChartPoint(x=round(x, 1), y=round(y, 1), value=v,
+                                 date=dt.strftime("%Y-%m-%d")))
+
+    polyline = " ".join(f"{c.x},{c.y}" for c in coords)
+    area = (
+        f"M {coords[0].x},{height} "
+        + " ".join(f"L {c.x},{c.y}" for c in coords)
+        + f" L {coords[-1].x},{height} Z"
+    )
+    return ValueChart(points=coords, polyline=polyline, area=area, min_value=vmin,
+                      max_value=vmax, current=values[-1], width=width, height=height)
+
+
+@dataclass
 class Mover:
     name: str
     set_code: str

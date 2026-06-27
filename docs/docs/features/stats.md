@@ -4,6 +4,9 @@ The **Stats** page (header link or `/stats`) is a visual overview of your owned 
 
 - **Summary tiles** — total cards, distinct printings, distinct cards, and an estimated USD value
   (foil stacks are valued at the foil price when available).
+- **Value over time** — a line chart of your collection's total value across every recorded
+  [price snapshot](prices.md). It appears once snapshots exist; with a single snapshot it shows the
+  current value and notes that the trend line fills in after the next refresh.
 - **Breakdowns** as bar charts — by color (mono / multicolor / colorless), rarity, card type, mana
   curve (0–6 and 7+), and your top sets.
 - **Most valuable** — your ten priciest owned cards, each linking to its

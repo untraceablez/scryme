@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import get_settings
 from src.db import get_session
+from src.prices import build_value_chart, value_series
 from src.stats import collection_stats
 from src.templating import templates
 
@@ -22,5 +23,9 @@ async def stats(
     return templates.TemplateResponse(
         request,
         "stats.html",
-        {"stats": await collection_stats(session), "read_only": get_settings().read_only},
+        {
+            "stats": await collection_stats(session),
+            "value_chart": build_value_chart(await value_series(session)),
+            "read_only": get_settings().read_only,
+        },
     )
