@@ -1,11 +1,23 @@
 """Price history tests: snapshotting, value series, movers, and the route."""
 
+import datetime
 import uuid
+from types import SimpleNamespace
 
 import pytest
 from src.models import Card, CollectionCard
-from src.prices import biggest_movers, collection_pl, snapshot_prices, value_series
+from src.prices import (
+    biggest_movers,
+    build_value_chart,
+    collection_pl,
+    snapshot_prices,
+    value_series,
+)
 from src.scryfall.mapping import card_to_columns
+
+
+def _snap(usd, day):
+    return SimpleNamespace(total_usd=usd, captured_at=datetime.datetime(2026, 6, day))
 
 
 async def _seed(session):
@@ -130,3 +142,50 @@ async def test_prices_route_shows_pl(client, session):
     assert resp.status_code == 200
     assert "Acquisition P/L" in resp.text
     assert "Cost basis" in resp.text
+
+
+def test_value_chart_empty():
+    chart = build_value_chart([])
+    assert not chart.available
+    assert not chart.has_trend
+    assert chart.points == []
+
+
+def test_value_chart_single_point():
+    chart = build_value_chart([_snap(100.0, 1)])
+    assert chart.available and not chart.has_trend
+    assert len(chart.points) == 1
+    assert chart.current == 100.0
+    assert chart.first_date == chart.last_date == "2026-06-01"
+
+
+def test_value_chart_trend_maps_extremes_to_edges():
+    chart = build_value_chart(
+        [_snap(100.0, 1), _snap(50.0, 2), _snap(150.0, 3)], width=1000, height=140, pad=8
+    )
+    assert chart.has_trend
+    assert chart.min_value == 50.0 and chart.max_value == 150.0 and chart.current == 150.0
+    # x spans the padded width, evenly spaced.
+    assert chart.points[0].x == 8.0 and chart.points[-1].x == 992.0
+    # Higher value -> nearer the top (smaller y); lower value -> nearer the bottom.
+    ys = {p.value: p.y for p in chart.points}
+    assert ys[150.0] == 8.0          # top = pad
+    assert ys[50.0] == 132.0         # bottom = height - pad
+    assert chart.area.startswith("M 8.0,140") and chart.area.endswith("Z")
+
+
+def test_value_chart_flat_series_sits_on_midline():
+    chart = build_value_chart([_snap(10.0, 1), _snap(10.0, 2)], height=140, pad=8)
+    # Equal values -> midline (pad + inner_h/2 = 8 + 124/2 = 70).
+    assert {p.y for p in chart.points} == {70.0}
+
+
+@pytest.mark.asyncio
+async def test_stats_route_shows_value_chart(client, session):
+    await _seed(session)
+    await snapshot_prices(session)
+    await snapshot_prices(session)
+    resp = await client.get("/stats")
+    assert resp.status_code == 200
+    assert "Value over time" in resp.text
+    assert "<polyline" in resp.text

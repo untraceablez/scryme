@@ -52,6 +52,36 @@
     </div>
   </div>
 
+  {# Value over time — line chart from the price snapshots #}
+  {% if value_chart.available %}
+  <section class="rounded-xl bg-surface ring-1 ring-edge p-4 mb-8">
+    <div class="flex items-baseline justify-between mb-3">
+      <h2 class="text-sm font-semibold text-muted uppercase tracking-wide">Value over time</h2>
+      <a href="/prices" class="text-xs text-muted hover:text-fg">Price history →</a>
+    </div>
+    {% if value_chart.has_trend %}
+    <svg viewBox="0 0 {{ value_chart.width }} {{ value_chart.height }}" class="w-full h-32"
+         preserveAspectRatio="none" role="img" aria-label="Collection value over time">
+      <path d="{{ value_chart.area }}" fill="var(--c-accent)" fill-opacity="0.12" />
+      <polyline points="{{ value_chart.polyline }}" fill="none" stroke="var(--c-accent)"
+                stroke-width="2" vector-effect="non-scaling-stroke"
+                stroke-linejoin="round" stroke-linecap="round" />
+    </svg>
+    <div class="mt-2 flex justify-between text-xs text-muted">
+      <span>{{ value_chart.first_date }}</span>
+      <span>${{ '{:,.2f}'.format(value_chart.min_value) }} – ${{ '{:,.2f}'.format(value_chart.max_value) }}
+        · {{ value_chart.points|length }} snapshots</span>
+      <span>{{ value_chart.last_date }}</span>
+    </div>
+    {% else %}
+    <p class="text-sm text-muted">
+      Only one snapshot so far (${{ '{:,.2f}'.format(value_chart.current) }} on
+      {{ value_chart.last_date }}). The trend line appears after the next price refresh.
+    </p>
+    {% endif %}
+  </section>
+  {% endif %}
+
   <div class="grid md:grid-cols-2 gap-6">
     <section class="rounded-xl bg-surface ring-1 ring-edge p-4">
       <h2 class="text-sm font-semibold text-muted mb-3 uppercase tracking-wide">Colors</h2>
