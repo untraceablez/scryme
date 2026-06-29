@@ -73,9 +73,9 @@ async def test_empty_collection(session):
 @pytest.mark.asyncio
 async def test_stats_route_renders(client, session):
     await _seed(session)
-    resp = await client.get("/stats")
+    resp = await client.get("/collection?tab=stats")
     assert resp.status_code == 200
-    assert "Collection stats" in resp.text
+    assert "My Collection" in resp.text
     assert "Most valuable" in resp.text
     assert "$22.20" in resp.text
     assert "ms ms-cost ms-" in resp.text  # color breakdown shows mana pips
@@ -128,5 +128,5 @@ async def test_collection_growth_empty(session):
 @pytest.mark.asyncio
 async def test_stats_route_shows_growth(client, session):
     await _seed(session)
-    resp = await client.get("/stats")
+    resp = await client.get("/collection?tab=stats")
     assert "Collection growth" in resp.text

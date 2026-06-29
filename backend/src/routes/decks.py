@@ -7,7 +7,6 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
-from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import get_settings
@@ -27,20 +26,10 @@ def _guard_writable() -> None:
         raise HTTPException(status_code=403, detail="This instance is read-only.")
 
 
-@router.get("/decks", response_class=HTMLResponse)
-async def list_decks(
-    request: Request, session: AsyncSession = Depends(get_session)
-) -> HTMLResponse:
-    rows = await session.execute(
-        select(Deck, func.count())
-        .outerjoin(Deck.cards)
-        .group_by(Deck.id)
-        .order_by(Deck.created_at.desc())
-    )
-    decks = [(d, n) for d, n in rows.all()]
-    return templates.TemplateResponse(
-        request, "decks.html", {"decks": decks, "read_only": get_settings().read_only}
-    )
+@router.get("/decks")
+async def list_decks() -> RedirectResponse:
+    # The deck index is now the Decks tab of /collection.
+    return RedirectResponse(url="/collection?tab=decks", status_code=307)
 
 
 @router.get("/decks/new", response_class=HTMLResponse)

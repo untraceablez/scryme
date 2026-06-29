@@ -23,7 +23,7 @@ async def _seed(session):
 @pytest.mark.asyncio
 async def test_list_binders(client, session):
     await _seed(session)
-    resp = await client.get("/binders")
+    resp = await client.get("/collection?tab=binders")
     assert resp.status_code == 200
     assert "Reds" in resp.text
     assert "Unsorted" in resp.text  # the null-binder group

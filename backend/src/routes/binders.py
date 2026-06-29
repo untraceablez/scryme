@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from fastapi import APIRouter, Depends, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -37,27 +37,10 @@ class CardView:
     image: str
 
 
-@router.get("/binders", response_class=HTMLResponse)
-async def list_binders(
-    request: Request, session: AsyncSession = Depends(get_session)
-) -> HTMLResponse:
-    rows = (
-        await session.execute(
-            select(
-                CollectionCard.binder_name,
-                func.sum(CollectionCard.quantity),
-                func.count(func.distinct(CollectionCard.scryfall_id)),
-            )
-            .group_by(CollectionCard.binder_name)
-            .order_by(func.sum(CollectionCard.quantity).desc())
-        )
-    ).all()
-    binders = [
-        {"name": name, "key": name if name else NONE_SENTINEL,
-         "label": name or "Unsorted", "quantity": int(qty), "distinct": int(distinct)}
-        for name, qty, distinct in rows
-    ]
-    return templates.TemplateResponse(request, "binders.html", {"binders": binders})
+@router.get("/binders")
+async def list_binders() -> RedirectResponse:
+    # The binder index is now the Binders tab of /collection.
+    return RedirectResponse(url="/collection?tab=binders", status_code=307)
 
 
 @router.get("/binders/cards", response_class=HTMLResponse)

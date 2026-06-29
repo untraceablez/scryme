@@ -5,27 +5,20 @@ from __future__ import annotations
 import csv
 import io
 
-from fastapi import APIRouter, Depends, Request
-from fastapi.responses import HTMLResponse, PlainTextResponse, StreamingResponse
+from fastapi import APIRouter, Depends
+from fastapi.responses import PlainTextResponse, RedirectResponse, StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.currency import get_currency, info
 from src.db import get_session
-from src.templating import templates
 from src.trade import trade_binder
 
 router = APIRouter(tags=["trade"])
 
 
-@router.get("/trade", response_class=HTMLResponse)
-async def trade_page(
-    request: Request, keep: int = 1, session: AsyncSession = Depends(get_session)
-) -> HTMLResponse:
-    currency = get_currency(request)
-    binder = await trade_binder(session, currency, keep=keep)
-    return templates.TemplateResponse(
-        request, "trade.html", {"binder": binder, "cur": info(currency)}
-    )
+@router.get("/trade")
+async def trade_page(keep: int = 1) -> RedirectResponse:
+    # The trade binder is now the Trade tab of /collection.
+    return RedirectResponse(url=f"/collection?tab=trade&keep={keep}", status_code=307)
 
 
 @router.get("/trade/export")
