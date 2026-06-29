@@ -3,22 +3,36 @@
 #
 # Run from desktop/:  npm run build:backend
 # Produces desktop/dist/scryme-backend/ (the exe + its _internal libs), which electron-builder
-# bundles into the app under resources/backend/. Build this on the OS you're packaging for —
-# PyInstaller output is platform-specific (no cross-compilation).
+# bundles into the app under resources/backend/.
 #
-# Interpreter selection (first that works):
-#   1. $SCRYME_BUILD_PYTHON                     — explicit interpreter, used as-is
-#   2. a throwaway venv at desktop/.build-venv  — when `python3 -m venv` works (clean, isolated)
-#   3. $SCRYME_PYTHON, else python3             — fallback when venv creation isn't available
-#      (e.g. Debian/Ubuntu without the python3-venv package); must already have the backend deps.
-# In every case backend requirements + PyInstaller are ensured via pip before freezing.
+# Two build paths, auto-selected:
+#   1. Docker (preferred) — freezes inside a Debian bookworm container. No host Python needed and
+#      the binary is portable (glibc >= 2.36). Set SCRYME_BUILD_NO_DOCKER=1 to skip it.
+#   2. Local interpreter — when Docker is unavailable. Uses, in order: $SCRYME_BUILD_PYTHON, a
+#      throwaway venv at desktop/.build-venv (if `python3 -m venv` works), else $SCRYME_PYTHON /
+#      python3 (must already have the backend requirements installed).
+#
+# PyInstaller output is platform-specific (no cross-compilation) — build on the OS you ship for.
+# The Docker path produces a Linux binary; for macOS/Windows installers, run the local path on a
+# Mac/Windows host.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BACKEND="$(cd "$HERE/../backend" && pwd)"
+REPO="$(cd "$HERE/.." && pwd)"
+BACKEND="$REPO/backend"
 VENV="$HERE/.build-venv"
 PYINSTALLER_VERSION="6.11.1"
 
+if [ -z "${SCRYME_BUILD_NO_DOCKER:-}" ] && command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
+  echo "==> Freezing backend inside a container (no host Python needed)"
+  rm -rf "$HERE/dist/scryme-backend"
+  docker build -f "$HERE/backend.Dockerfile" --target export \
+    --output "type=local,dest=$HERE/dist" "$REPO"
+  echo "==> Done: $HERE/dist/scryme-backend/"
+  exit 0
+fi
+
+echo "==> Docker unavailable; freezing with a local Python interpreter"
 if [ -n "${SCRYME_BUILD_PYTHON:-}" ]; then
   PYTHON="$SCRYME_BUILD_PYTHON"
   echo "==> Using SCRYME_BUILD_PYTHON: $PYTHON"
