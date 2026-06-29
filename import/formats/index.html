@@ -709,6 +709,33 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#moxfield" class="md-nav__link">
+    <span class="md-ellipsis">
+      Moxfield
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#archidekt" class="md-nav__link">
+    <span class="md-ellipsis">
+      Archidekt
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#anything-else-the-column-mapping-wizard" class="md-nav__link">
+    <span class="md-ellipsis">
+      Anything else: the column-mapping wizard
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#adding-a-new-format" class="md-nav__link">
     <span class="md-ellipsis">
       Adding a new format
@@ -1343,6 +1370,33 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#moxfield" class="md-nav__link">
+    <span class="md-ellipsis">
+      Moxfield
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#archidekt" class="md-nav__link">
+    <span class="md-ellipsis">
+      Archidekt
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#anything-else-the-column-mapping-wizard" class="md-nav__link">
+    <span class="md-ellipsis">
+      Anything else: the column-mapping wizard
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#adding-a-new-format" class="md-nav__link">
     <span class="md-ellipsis">
       Adding a new format
@@ -1370,8 +1424,9 @@
 
 
 <h1 id="supported-formats">Supported Formats</h1>
-<p>scryme recognizes three export formats by inspecting the CSV header — detection is automatic and
-unambiguous. The tables below show how each app's columns map to scryme's internal fields.</p>
+<p>scryme recognizes several export formats by inspecting the CSV header — detection is automatic and
+unambiguous. The tables below show how each app's columns map to scryme's internal fields. Anything
+it doesn't recognize falls back to the <a href="#anything-else-the-column-mapping-wizard">column-mapping wizard</a>.</p>
 <h2 id="manabox">ManaBox</h2>
 <p>ManaBox includes a <strong>Scryfall ID</strong>, the most reliable match key.</p>
 <p><strong>Header</strong></p>
@@ -1536,6 +1591,96 @@ primary match key.</p>
 </tbody>
 </table>
 <p><strong>Detected by:</strong> a <code>Scryfall ID</code> column, or <code>Edition</code> + <code>Card Number</code> (and never a ManaBox file).</p>
+<h2 id="moxfield">Moxfield</h2>
+<p>Moxfield's collection CSV has <strong>no Scryfall ID</strong>, so rows match on set code (<code>Edition</code>) + collector
+number.</p>
+<p><strong>Header</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Count,Tradelist Count,Name,Edition,Condition,Language,Foil,Tags,Last Modified,
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Collector Number,Alter,Proxy,Purchase Price
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Moxfield column</th>
+<th>scryme field</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Name</code></td>
+<td>name</td>
+</tr>
+<tr>
+<td><code>Edition</code></td>
+<td>set code <em>(primary match, with Collector Number)</em></td>
+</tr>
+<tr>
+<td><code>Collector Number</code></td>
+<td>collector number</td>
+</tr>
+<tr>
+<td><code>Foil</code></td>
+<td>finish (<code>foil</code> / <code>etched</code> / empty)</td>
+</tr>
+<tr>
+<td><code>Count</code></td>
+<td>quantity</td>
+</tr>
+<tr>
+<td><code>Condition</code> / <code>Language</code> / <code>Purchase Price</code></td>
+<td>condition / language / purchase price</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Detected by:</strong> <code>Tradelist Count</code> + <code>Edition</code> + <code>Collector Number</code> + <code>Purchase Price</code>.</p>
+<h2 id="archidekt">Archidekt</h2>
+<p>Archidekt's collection CSV carries a <strong>Scryfall ID</strong> (primary match) and an explicit <code>Finish</code>.</p>
+<p><strong>Header</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Quantity,Name,Finish,Condition,Date Added,Language,Purchase Price,Tags,Edition Name,
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Edition Code,Multiverse Id,Scryfall ID,MTGO ID,Collector Number
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Archidekt column</th>
+<th>scryme field</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Name</code></td>
+<td>name</td>
+</tr>
+<tr>
+<td><code>Scryfall ID</code></td>
+<td>scryfall id <em>(primary match)</em></td>
+</tr>
+<tr>
+<td><code>Edition Code</code></td>
+<td>set code</td>
+</tr>
+<tr>
+<td><code>Collector Number</code></td>
+<td>collector number</td>
+</tr>
+<tr>
+<td><code>Finish</code></td>
+<td>finish (<code>Normal</code> / <code>Foil</code> / <code>Etched</code>)</td>
+</tr>
+<tr>
+<td><code>Quantity</code> / <code>Condition</code> / <code>Language</code> / <code>Purchase Price</code></td>
+<td>quantity / condition / language / purchase price</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Detected by:</strong> <code>Edition Code</code> + <code>Scryfall ID</code>.</p>
+<h2 id="anything-else-the-column-mapping-wizard">Anything else: the column-mapping wizard</h2>
+<p>If your file is a CSV that scryme doesn't recognize — a TCGplayer or Deckbox export, a spreadsheet
+you made yourself, anything — uploading it opens a <strong>mapping wizard</strong> instead of an error. It reads
+the file's column headers and lets you match each one to a scryme field (card name, quantity, set
+code, collector number, Scryfall ID, finish, condition, language, purchase price). scryme guesses
+the obvious ones; you confirm or adjust, and only <strong>Card name</strong> is required. From there it's the
+same preview → confirm flow as a recognized format.</p>
 <h2 id="adding-a-new-format">Adding a new format</h2>
 <p>Importers self-register. To add one, create a module in <code>backend/src/importers/</code> with a class that
 implements <code>detect(text)</code> and <code>parse(text)</code> (returning <code>ImportRow</code>s) and is decorated with
@@ -1563,7 +1708,7 @@ specific enough not to overlap with existing formats.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 25, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 29, 2026</span>
   </span>
 
     
