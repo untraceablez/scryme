@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
-from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.checklists import (
@@ -25,21 +24,10 @@ def _guard_writable() -> None:
         raise HTTPException(status_code=403, detail="This instance is read-only.")
 
 
-@router.get("/checklists", response_class=HTMLResponse)
-async def list_checklists(
-    request: Request, session: AsyncSession = Depends(get_session)
-) -> HTMLResponse:
-    rows = await session.execute(
-        select(Checklist, func.count())
-        .outerjoin(Checklist.items)
-        .group_by(Checklist.id)
-        .order_by(Checklist.created_at.desc())
-    )
-    checklists = [(c, n) for c, n in rows.all()]
-    return templates.TemplateResponse(
-        request, "checklists.html",
-        {"checklists": checklists, "read_only": get_settings().read_only},
-    )
+@router.get("/checklists")
+async def list_checklists() -> RedirectResponse:
+    # The checklist index is now the Checklists tab of /collection.
+    return RedirectResponse(url="/collection?tab=checklists", status_code=307)
 
 
 @router.post("/checklists")

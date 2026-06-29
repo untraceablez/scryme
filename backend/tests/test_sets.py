@@ -73,9 +73,9 @@ async def test_set_detail_unknown_returns_none(session):
 @pytest.mark.asyncio
 async def test_sets_routes_render(client, session):
     await _seed(session)
-    listing = await client.get("/sets")
+    listing = await client.get("/collection?tab=stats&view=sets")
     assert listing.status_code == 200
-    assert "Set completion" in listing.text
+    assert "My Collection" in listing.text
     assert "Test Set" in listing.text
     assert "2/5" in listing.text
 

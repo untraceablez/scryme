@@ -1,0 +1,17 @@
+{% if binders %}
+<ul class="grid sm:grid-cols-2 gap-3">
+  {% for b in binders %}
+  <li>
+    <a href="/binders/cards?name={{ b.key | urlencode }}"
+       class="block rounded-xl bg-surface ring-1 ring-edge px-4 py-3 hover:ring-accent transition">
+      <div class="font-medium truncate {% if not b.name %}text-muted italic{% endif %}">{{ b.label }}</div>
+      <div class="text-xs text-muted">{{ '{:,}'.format(b.quantity) }} cards · {{ '{:,}'.format(b.distinct) }} distinct</div>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="text-muted py-16 text-center">
+  No collection yet. <a href="/upload" class="underline">Upload one</a> to organize it into binders.
+</div>
+{% endif %}

@@ -52,9 +52,9 @@ async def test_for_trade_tag_included_regardless_of_quantity(session):
 @pytest.mark.asyncio
 async def test_trade_routes(client, session):
     await _own(session, "Spare", 1, qty=3, usd="2.50")
-    page = await client.get("/trade")
+    page = await client.get("/collection?tab=trade")
     assert page.status_code == 200
-    assert "Trade binder" in page.text and "Spare" in page.text
+    assert "My Collection" in page.text and "Spare" in page.text
 
     txt = await client.get("/trade/export?fmt=txt")
     assert txt.status_code == 200
