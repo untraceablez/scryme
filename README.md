@@ -7,7 +7,7 @@
   [![GitHub Release](https://img.shields.io/github/v/release/Leyline-Coding/scryme)](https://github.com/Leyline-Coding/scryme/releases)
   [![License](https://img.shields.io/github/license/Leyline-Coding/scryme)](https://github.com/Leyline-Coding/scryme/blob/main/LICENSE)
   [![GitHub Stars](https://img.shields.io/github/stars/Leyline-Coding/scryme)](https://github.com/Leyline-Coding/scryme/stargazers)
-  [![GitHub Issues](https://img.shields.io/github/issues/untraceablez/pantrie)](https://github.com/Leyline-Coding/scryme/issues)
+  [![GitHub Issues](https://img.shields.io/github/issues/Leyline-Coding/scryme)](https://github.com/Leyline-Coding/scryme/issues)
 <br>  [Public Demo](https://demo.scryme.app) · [Documentation](https://docs.scryme.app) · [Report Bug](https://github.com/Leyline-Coding/scryme/issues)
 </div>
 
