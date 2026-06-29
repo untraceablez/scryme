@@ -9,7 +9,10 @@ proxy that also serves cached card images.
 - ~2 GB of disk for the card database, plus more if you cache images (the Scryfall bulk file is
   ~550 MB compressed; full image caches can run to several GB)
 - Any common CPU architecture — the published image is **multi-arch (linux/amd64 + linux/arm64)**,
-  so it runs natively on x86 servers as well as a Raspberry Pi or Apple-Silicon machine.
+  so it runs natively on x86 servers as well as a Raspberry Pi or Apple-Silicon machine. `docker
+  pull ghcr.io/leyline-coding/scryme:latest` auto-selects your architecture; explicit
+  **`:latest-amd64`** / **`:latest-arm64`** (and `:vX.Y.Z-amd64` / `-arm64`) tags are published too
+  if you need a specific one.
 
 ## Start the stack
 
