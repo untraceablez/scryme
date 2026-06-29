@@ -12,6 +12,10 @@ on:
     types: [published]
   workflow_dispatch:
 
+# Needed for electron-builder to upload installers to the GitHub Release via GITHUB_TOKEN.
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
