@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Map columns · scryme{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-6">
+  <header class="flex items-center gap-3 mb-6">
+    <a href="/" class="text-2xl font-bold tracking-tight shrink-0">
+      <span class="text-accent">scry</span>me
+    </a>
+    <h1 class="text-lg font-semibold">Map your columns</h1>
+    <a href="/upload" class="ml-auto text-sm text-muted hover:text-fg">← Upload</a>
+  </header>
+
+  {% if error %}
+  <div class="rounded-lg border border-rose-700 bg-rose-950/50 px-4 py-3 text-rose-200 text-sm mb-4">
+    {{ error }}
+  </div>
+  {% endif %}
+
+  <p class="text-sm text-muted mb-4">
+    We didn't recognize this file's format, but it's a CSV — match your columns to scryme's fields
+    and we'll import it. Only <b>Card name</b> is required; leave the rest as <i>— skip —</i> if your
+    file doesn't have them. The detected columns are: {{ headers | join(', ') }}.
+  </p>
+
+  <form method="post" action="/upload/mapped" class="space-y-3">
+    <textarea name="csv" class="hidden">{{ csv }}</textarea>
+    {% for f in fields %}
+    <div class="flex items-center gap-3">
+      <label class="w-40 shrink-0 text-sm {% if f.required %}font-medium{% else %}text-muted{% endif %}">
+        {{ f.label }}{% if f.required %} *{% endif %}
+      </label>
+      <select name="map_{{ f.key }}"
+        class="flex-1 rounded-lg bg-bg border border-edge px-3 py-2 text-sm">
+        <option value="">— skip —</option>
+        {% for h in headers %}
+        <option value="{{ h }}" {% if guess.get(f.key) == h %}selected{% endif %}>{{ h }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endfor %}
+    <div class="pt-2">
+      <button type="submit" class="rounded-lg bg-accent text-accent-fg px-5 py-2.5 text-sm font-medium">
+        Preview import
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

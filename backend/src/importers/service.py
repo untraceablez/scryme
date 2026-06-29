@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.importers.base import ImportRow, UnknownFormatError, detect_format
+from src.importers.mapping import parse_with_mapping
 from src.importers.matching import MatchedRow, match_rows
 from src.importers.merge import (
     Conflict,
@@ -40,18 +41,14 @@ class ImportPreview:
     conflicts: list[Conflict]
 
 
-async def stage_upload(session: AsyncSession, text: str) -> ImportPreview:
-    importer = detect_format(text)
-    if importer is None:
-        raise UnknownFormatError(
-            "Unrecognized file. Expected a ManaBox, Dragon Shield, or Delver Lens export."
-        )
-
-    rows = importer.parse(text)
+async def _stage_rows(
+    session: AsyncSession, rows: list[ImportRow], source_format: str
+) -> ImportPreview:
+    """Match rows, persist the staging row, and build the preview (shared by both entry points)."""
     matched = await match_rows(session, rows)
 
     staging = ImportStaging(
-        source_format=importer.format_name,
+        source_format=source_format,
         payload=[
             {"row": m.row.to_dict(), "scryfall_id": m.scryfall_id, "method": m.method}
             for m in matched
@@ -67,7 +64,7 @@ async def stage_upload(session: AsyncSession, text: str) -> ImportPreview:
 
     return ImportPreview(
         token=str(staging.token),
-        source_format=importer.format_name,
+        source_format=source_format,
         total_rows=len(rows),
         matched_count=sum(1 for m in matched if m.matched),
         unmatched_count=len(unmatched),
@@ -75,6 +72,25 @@ async def stage_upload(session: AsyncSession, text: str) -> ImportPreview:
         unmatched_samples=unmatched[:PREVIEW_SAMPLE],
         conflicts=conflicts,
     )
+
+
+async def stage_upload(session: AsyncSession, text: str) -> ImportPreview:
+    importer = detect_format(text)
+    if importer is None:
+        raise UnknownFormatError(
+            "Unrecognized file. Expected a ManaBox, Dragon Shield, or Delver Lens export."
+        )
+    return await _stage_rows(session, importer.parse(text), importer.format_name)
+
+
+async def stage_mapped_upload(
+    session: AsyncSession, text: str, mapping: dict[str, str]
+) -> ImportPreview:
+    """Stage a CSV parsed via a user-supplied column mapping (the import wizard)."""
+    rows = parse_with_mapping(text, mapping)
+    if not rows:
+        raise UnknownFormatError("No rows parsed — check that the Card name column is mapped.")
+    return await _stage_rows(session, rows, "mapped")
 
 
 async def _load_staged(session: AsyncSession, token: str) -> tuple[ImportStaging, list[MatchedRow]]:

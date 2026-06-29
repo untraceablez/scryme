@@ -79,9 +79,12 @@ scope is the owned collection; `scope=all` searches every card.
 Two-phase upload: `service.stage_upload` detects the format (`base` registry), parses to
 `ImportRow`s, matches each to a card (`matching`: Scryfall ID → set+number → name → unmatched),
 and stages the result in `import_staging`; `service.confirm_upload` applies a `MergeStrategy`
-(replace / increment / per_card) via `merge.apply_merge` and clears the staging row. Add a parser
-by writing a module in `importers/` with `detect`/`parse` and `@register`, then import it in
-`importers/__init__.py`. Routes: `/upload` (form + preview), `/upload/confirm`.
+(replace / increment / per_card) via `merge.apply_merge` and clears the staging row. Parsers:
+ManaBox, Dragon Shield, Delver Lens, Moxfield, Archidekt. Add one by writing a module in
+`importers/` with `detect`/`parse` and `@register`, then import it in `importers/__init__.py`. Any
+unrecognized CSV falls back to the **column-mapping wizard** (`importers/mapping.py`;
+`service.stage_mapped_upload`). Routes: `/upload` (form + preview), `/upload/mapped` (wizard),
+`/upload/confirm`.
 
 ## Status
 

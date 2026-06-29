@@ -1,7 +1,8 @@
 # Supported Formats
 
-scryme recognizes three export formats by inspecting the CSV header — detection is automatic and
-unambiguous. The tables below show how each app's columns map to scryme's internal fields.
+scryme recognizes several export formats by inspecting the CSV header — detection is automatic and
+unambiguous. The tables below show how each app's columns map to scryme's internal fields. Anything
+it doesn't recognize falls back to the [column-mapping wizard](#anything-else-the-column-mapping-wizard).
 
 ## ManaBox
 
@@ -76,6 +77,60 @@ primary match key.
 | `My Price` / `Purchase Price` / `Price` | purchase price |
 
 **Detected by:** a `Scryfall ID` column, or `Edition` + `Card Number` (and never a ManaBox file).
+
+## Moxfield
+
+Moxfield's collection CSV has **no Scryfall ID**, so rows match on set code (`Edition`) + collector
+number.
+
+**Header**
+
+```
+Count,Tradelist Count,Name,Edition,Condition,Language,Foil,Tags,Last Modified,
+Collector Number,Alter,Proxy,Purchase Price
+```
+
+| Moxfield column | scryme field |
+| --- | --- |
+| `Name` | name |
+| `Edition` | set code *(primary match, with Collector Number)* |
+| `Collector Number` | collector number |
+| `Foil` | finish (`foil` / `etched` / empty) |
+| `Count` | quantity |
+| `Condition` / `Language` / `Purchase Price` | condition / language / purchase price |
+
+**Detected by:** `Tradelist Count` + `Edition` + `Collector Number` + `Purchase Price`.
+
+## Archidekt
+
+Archidekt's collection CSV carries a **Scryfall ID** (primary match) and an explicit `Finish`.
+
+**Header**
+
+```
+Quantity,Name,Finish,Condition,Date Added,Language,Purchase Price,Tags,Edition Name,
+Edition Code,Multiverse Id,Scryfall ID,MTGO ID,Collector Number
+```
+
+| Archidekt column | scryme field |
+| --- | --- |
+| `Name` | name |
+| `Scryfall ID` | scryfall id *(primary match)* |
+| `Edition Code` | set code |
+| `Collector Number` | collector number |
+| `Finish` | finish (`Normal` / `Foil` / `Etched`) |
+| `Quantity` / `Condition` / `Language` / `Purchase Price` | quantity / condition / language / purchase price |
+
+**Detected by:** `Edition Code` + `Scryfall ID`.
+
+## Anything else: the column-mapping wizard
+
+If your file is a CSV that scryme doesn't recognize — a TCGplayer or Deckbox export, a spreadsheet
+you made yourself, anything — uploading it opens a **mapping wizard** instead of an error. It reads
+the file's column headers and lets you match each one to a scryme field (card name, quantity, set
+code, collector number, Scryfall ID, finish, condition, language, purchase price). scryme guesses
+the obvious ones; you confirm or adjust, and only **Card name** is required. From there it's the
+same preview → confirm flow as a recognized format.
 
 ## Adding a new format
 
