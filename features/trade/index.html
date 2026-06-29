@@ -12,13 +12,13 @@
         <meta name="author" content="Taylor Cohron">
       
       
-        <link rel="canonical" href="https://docs.scryme.app/features/stats/">
+        <link rel="canonical" href="https://docs.scryme.app/features/trade/">
       
       
-        <link rel="prev" href="../trade/">
+        <link rel="prev" href="../wishlist/">
       
       
-        <link rel="next" href="../prices/">
+        <link rel="next" href="../stats/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Collection Stats - scryme Documentation</title>
+        <title>Trade Binder - scryme Documentation</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#collection-stats" class="md-skip">
+        <a href="#trade-binder" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Collection Stats
+              Trade Binder
             
           </span>
         </div>
@@ -967,27 +967,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../trade/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Trade Binder
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -1000,7 +979,77 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Trade Binder
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Trade Binder
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-shows-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      What shows up
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export" class="md-nav__link">
+    <span class="md-ellipsis">
+      Export
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stats/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1009,7 +1058,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1220,6 +1268,32 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-shows-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      What shows up
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export" class="md-nav__link">
+    <span class="md-ellipsis">
+      Export
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1236,24 +1310,23 @@
   
 
 
-<h1 id="collection-stats">Collection stats</h1>
-<p>The <strong>Stats</strong> page (header link or <code>/stats</code>) is a visual overview of your owned collection.</p>
+<h1 id="trade-binder">Trade binder</h1>
+<p>The <strong>Trade binder</strong> (<code>/trade</code>, or the <em>trade</em> link on the home page) gathers the cards you have
+spare or have flagged for trade — handy for sorting out what to bring to a trade night.</p>
+<h2 id="what-shows-up">What shows up</h2>
 <ul>
-<li><strong>Summary tiles</strong> — total cards, distinct printings, distinct cards, and an estimated USD value
-  (foil stacks are valued at the foil price when available).</li>
-<li><strong>Value over time</strong> — a line chart of your collection's total value across every recorded
-  <a href="../prices/">price snapshot</a>. It appears once snapshots exist; with a single snapshot it shows the
-  current value and notes that the trend line fills in after the next refresh.</li>
-<li><strong>Collection growth</strong> — how many cards (and how much value, at current prices) you added each
-  month, from when each card entered your collection. Shows the most recent 12 active months;
-  the header totals cover your whole history.</li>
-<li><strong>Breakdowns</strong> as bar charts — by color (mono / multicolor / colorless), rarity, card type, mana
-  curve (0–6 and 7+), and your top sets.</li>
-<li><strong>Most valuable</strong> — your ten priciest owned cards, each linking to its
-  <a href="../cards/">detail page</a>.</li>
+<li><strong>Surplus</strong> — any printing you own more than <strong>Keep</strong> copies of. The <em>Keep</em> selector (0–4) sets
+  how many you hold back; the binder lists the <strong>spares</strong> beyond that. Set it to <code>4</code> to see only
+  extras beyond a playset, or <code>1</code> to surface every duplicate.</li>
+<li><strong>Flagged</strong> — any card with a <code>for-trade</code> (or <code>for trade</code> / <code>trade</code>) <a href="../cards/#tags">tag</a>, shown
+  regardless of quantity and marked with a ★.</li>
 </ul>
-<p>Everything is computed from the cards you own, so the page is empty until you
-<a href="../../import/overview/">import a collection</a>.</p>
+<p>Each row shows how many you own, how many are tradeable, the per-card price, and the line value, in
+your chosen <a href="../theming/#display-currency">currency</a>. The header totals the whole binder, sorted
+most-valuable first.</p>
+<h2 id="export">Export</h2>
+<p><strong>.txt</strong> gives a plain <code>Qty Name (SET) Number</code> list (paste into a trade thread); <strong>.csv</strong> is a
+spreadsheet with quantities and prices. Both respect the current <em>Keep</em> threshold.</p>
 
 
 
@@ -1276,7 +1349,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 27, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 29, 2026</span>
   </span>
 
     
@@ -1286,7 +1359,7 @@
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3h-2Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 26, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 29, 2026</span>
   </span>
 
     
@@ -1321,7 +1394,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../trade/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Trade Binder">
+          <a href="../wishlist/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Wishlist">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -1331,20 +1404,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Trade Binder
+                Wishlist
               </div>
             </div>
           </a>
         
         
           
-          <a href="../prices/" class="md-footer__link md-footer__link--next" aria-label="Next: Price History">
+          <a href="../stats/" class="md-footer__link md-footer__link--next" aria-label="Next: Collection Stats">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Price History
+                Collection Stats
               </div>
             </div>
             <div class="md-footer__button md-icon">

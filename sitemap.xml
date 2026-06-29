@@ -61,6 +61,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://docs.scryme.app/features/trade/</loc>
+         <lastmod>2026-06-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://docs.scryme.app/features/wishlist/</loc>
          <lastmod>2026-06-29</lastmod>
          <changefreq>daily</changefreq>
