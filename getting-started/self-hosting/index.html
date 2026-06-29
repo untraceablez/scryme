@@ -549,6 +549,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#status-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Status &amp; monitoring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#upgrading" class="md-nav__link">
     <span class="md-ellipsis">
       Upgrading
@@ -1352,6 +1361,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#status-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Status &amp; monitoring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#upgrading" class="md-nav__link">
     <span class="md-ellipsis">
       Upgrading
@@ -1419,6 +1437,14 @@ app works fully offline), run:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>backend<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>src.cli<span class="w"> </span>backfill-images
 </code></pre></div>
 </div>
+<h2 id="status-monitoring">Status &amp; monitoring</h2>
+<p>The <strong><code>/admin</code></strong> page is a status dashboard — card count, image cache size, last ingest, database
+size, and how much you've got in your collection / decks / wishlist / checklists, plus whether
+backups are configured.</p>
+<p>For monitoring, <strong><code>/metrics</code></strong> exposes the same figures in <strong>Prometheus</strong> text format
+(<code>scryme_cards_total</code>, <code>scryme_collection_value_usd</code>, <code>scryme_last_ingest_timestamp_seconds</code>, …),
+so you can scrape it into Prometheus/Grafana. Both endpoints are read-only; if your instance is
+public, put them behind your reverse proxy's auth.</p>
 <h2 id="upgrading">Upgrading</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git<span class="w"> </span>pull
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
