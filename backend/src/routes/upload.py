@@ -12,8 +12,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.config import get_settings
 from src.db import get_session
 from src.importers.base import UnknownFormatError
+from src.importers.mapping import MAP_FIELDS, csv_headers, guess_mapping
 from src.importers.merge import MergeStrategy
-from src.importers.service import confirm_upload, stage_upload
+from src.importers.service import confirm_upload, stage_mapped_upload, stage_upload
 from src.templating import templates
 
 router = APIRouter(tags=["upload"])
@@ -50,8 +51,41 @@ async def upload_preview(
     try:
         preview = await stage_upload(session, text)
     except UnknownFormatError as exc:
+        # No known parser — but if it's a CSV, offer the column-mapping wizard instead of erroring.
+        headers = csv_headers(text)
+        if headers:
+            return templates.TemplateResponse(
+                request, "upload_map.html",
+                {"headers": headers, "fields": MAP_FIELDS,
+                 "guess": guess_mapping(headers), "csv": text},
+            )
         return templates.TemplateResponse(request, "upload.html", {"error": str(exc)})
 
+    return templates.TemplateResponse(request, "upload_preview.html", {"preview": preview})
+
+
+@router.post("/upload/mapped", response_class=HTMLResponse)
+async def upload_mapped(
+    request: Request,
+    session: AsyncSession = Depends(get_session),
+) -> HTMLResponse:
+    _guard_writable()
+    form = await request.form()
+    text = str(form.get("csv") or "")
+    mapping = {
+        f.key: str(form[f"map_{f.key}"])
+        for f in MAP_FIELDS
+        if form.get(f"map_{f.key}")
+    }
+    try:
+        preview = await stage_mapped_upload(session, text, mapping)
+    except UnknownFormatError as exc:
+        headers = csv_headers(text) or []
+        return templates.TemplateResponse(
+            request, "upload_map.html",
+            {"headers": headers, "fields": MAP_FIELDS, "guess": mapping, "csv": text,
+             "error": str(exc)},
+        )
     return templates.TemplateResponse(request, "upload_preview.html", {"preview": preview})
 
 

@@ -50,8 +50,17 @@ async def test_preview_then_confirm(client, session):
 
 
 @pytest.mark.asyncio
-async def test_unknown_format_shows_error(client):
+async def test_unknown_csv_offers_mapping_wizard(client):
+    # An unrecognized but CSV-shaped file now opens the column-mapping wizard.
     files = {"file": ("x.csv", b"Foo,Bar\n1,2\n", "text/csv")}
+    resp = await client.post("/upload", files=files)
+    assert resp.status_code == 200
+    assert "Map your columns" in resp.text
+
+
+@pytest.mark.asyncio
+async def test_non_csv_shows_error(client):
+    files = {"file": ("x.txt", b"this is not a csv at all", "text/plain")}
     resp = await client.post("/upload", files=files)
     assert resp.status_code == 200
     assert "Unrecognized file" in resp.text
