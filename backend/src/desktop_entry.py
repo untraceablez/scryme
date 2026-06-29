@@ -3,8 +3,8 @@
 The Electron main process boots an embedded PostgreSQL, then launches this (a PyInstaller-frozen
 binary in production, or ``python -m src.desktop_entry`` in dev). It applies migrations and serves
 the FastAPI app on ``127.0.0.1:$SCRYME_PORT`` — the same app the web/Docker build runs, just wired
-to the bundled database via the env vars Electron sets (``SCRYME_DATABASE_URL``, ``SCRYME_DATA_DIR``,
-``SCRYME_IMAGE_CACHE_DIR``).
+to the bundled database via the env vars Electron sets (``SCRYME_DATABASE_URL``,
+``SCRYME_DATA_DIR``, ``SCRYME_IMAGE_CACHE_DIR``).
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ from alembic.config import Config
 
 
 def _base_dir() -> Path:
-    """The directory holding ``alembic/`` — the PyInstaller bundle root when frozen, else backend/."""
+    """Dir holding ``alembic/`` — the PyInstaller bundle root when frozen, else backend/."""
     if getattr(sys, "frozen", False):  # PyInstaller sets sys.frozen + sys._MEIPASS
         return Path(sys._MEIPASS)  # type: ignore[attr-defined]
     return Path(__file__).resolve().parent.parent
