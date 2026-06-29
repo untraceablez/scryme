@@ -434,6 +434,8 @@
       
         
       
+        
+      
     
     
     
@@ -479,6 +481,27 @@
   
   <span class="md-ellipsis">
     Self-Hosting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/desktop/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Desktop App
   </span>
   
 
@@ -1158,18 +1181,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#planned" class="md-nav__link">
+  <a href="#desktop-app" class="md-nav__link">
     <span class="md-ellipsis">
-      Planned
+      Desktop app
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#on-the-horizon" class="md-nav__link">
+  <a href="#planned" class="md-nav__link">
     <span class="md-ellipsis">
-      On the horizon
+      Planned
     </span>
   </a>
   
@@ -1337,18 +1360,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#planned" class="md-nav__link">
+  <a href="#desktop-app" class="md-nav__link">
     <span class="md-ellipsis">
-      Planned
+      Desktop app
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#on-the-horizon" class="md-nav__link">
+  <a href="#planned" class="md-nav__link">
     <span class="md-ellipsis">
-      On the horizon
+      Planned
     </span>
   </a>
   
@@ -1397,9 +1420,27 @@ not a commitment to dates or order. Have an idea? <a href="https://github.com/Le
 <li><strong><a href="../features/wishlist/">Wishlist</a></strong> — a want list, including "add a deck's missing cards".</li>
 <li><strong><a href="../features/theming/">Theming</a></strong> + <strong><a href="../features/theming/#display-currency">currency</a></strong> (USD/EUR),
   result <strong>sort</strong>, result <strong>export</strong> (CSV / decklist / ManaBox), and <strong>saved searches</strong>.</li>
-<li><strong><a href="../features/backup/">Backup &amp; restore</a></strong> — a portable JSON dump of your data.</li>
+<li><strong><a href="../features/backup/">Backup &amp; restore</a></strong> — a portable JSON dump of your data, plus scheduled
+  on-disk backups (optionally encrypted).</li>
 <li>In-app <strong>collection editing</strong> (add/edit/bulk), <strong>faceted browse</strong>, and <strong>"did you mean?"</strong> search.</li>
+<li>More import formats (Moxfield, Archidekt) + a <strong>CSV column-mapping wizard</strong>; <strong>trade/surplus
+  binder</strong>; <strong>custom checklists</strong>.</li>
+<li><strong><a href="../search/advanced/">Saved-search alerts</a></strong> — after each card-data update, saved searches
+  surface cards that newly match (with a "What's new" panel and desktop notifications).</li>
+<li>A versioned <strong>JSON/REST API</strong> (<code>/api/v1</code>) and <strong>Prometheus metrics</strong> (<code>/metrics</code>).</li>
+<li><strong><a href="../getting-started/desktop/">Desktop app</a></strong> — a native macOS/Windows/Linux build (see below).</li>
 <li><strong>Physical-only</strong> — Arena/MTGO-only cards are excluded; scryme is for paper collections.</li>
+</ul>
+<h2 id="desktop-app">Desktop app</h2>
+<p>The <strong><a href="../getting-started/desktop/">Electron desktop app</a></strong> is shipped: an install-free build that
+bundles PostgreSQL and the backend, with drag-and-drop import, a global quick-search hotkey, LAN
+sharing, system notifications, and auto-update. Still on its roadmap:</p>
+<ul>
+<li><strong>Signed &amp; notarized installers</strong> — today's builds are unsigned (SmartScreen / Gatekeeper warn on
+  first open). The signing config is in place; it needs Windows/Apple certificates.</li>
+<li><strong>Store distribution</strong> — Homebrew cask, winget, Flatpak, and AUR (starter manifests exist under
+  <code>desktop/packaging/</code>).</li>
+<li><strong>Multi-arch builds</strong> — currently x64 on Windows/Linux and arm64 on macOS.</li>
 </ul>
 <h2 id="planned">Planned</h2>
 <p>Tracked as open issues — roughly in priority order:</p>
@@ -1412,33 +1453,39 @@ not a commitment to dates or order. Have an idea? <a href="https://github.com/Le
 </thead>
 <tbody>
 <tr>
-<td><a href="https://github.com/Leyline-Coding/scryme/issues/58">#58</a></td>
-<td>Saved-search alerts — surface newly-matching cards after an ingest</td>
-</tr>
-<tr>
 <td><a href="https://github.com/Leyline-Coding/scryme/issues/59">#59</a></td>
 <td>Undo last import (pre-merge snapshot + one-click restore)</td>
-</tr>
-<tr>
-<td><a href="https://github.com/Leyline-Coding/scryme/issues/66">#66</a></td>
-<td>More import formats (Archidekt / Moxfield / TCGplayer / Deckbox) + CSV column mapping</td>
-</tr>
-<tr>
-<td><a href="https://github.com/Leyline-Coding/scryme/issues/67">#67</a></td>
-<td>Trade / surplus binder view</td>
 </tr>
 <tr>
 <td><a href="https://github.com/Leyline-Coding/scryme/issues/68">#68</a></td>
 <td>Mobile-responsive pass</td>
 </tr>
+<tr>
+<td><a href="https://github.com/Leyline-Coding/scryme/issues/87">#87</a></td>
+<td>Build a deck from your collection</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Leyline-Coding/scryme/issues/88">#88</a></td>
+<td>Price watchlist with thresholds</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Leyline-Coding/scryme/issues/80">#80</a></td>
+<td>Read-only share links for decks/binders</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Leyline-Coding/scryme/issues/98">#98</a></td>
+<td>Import a deck from a URL</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Leyline-Coding/scryme/issues/100">#100</a></td>
+<td>Deck diff / versions</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Leyline-Coding/scryme/issues/101">#101</a></td>
+<td>Duplicate / merge stacks</td>
+</tr>
 </tbody>
 </table>
-<h2 id="on-the-horizon">On the horizon</h2>
-<ul>
-<li><strong><a href="https://github.com/Leyline-Coding/scryme/issues/49">#49 — Electron desktop app</a></strong> — package
-  scryme as a self-contained desktop app with portable Postgres and a user-chosen data directory
-  you can back up to Google Drive, Dropbox, and the like.</li>
-</ul>
 <p>See the <a href="../development/architecture/">architecture notes</a> and
 <a href="../development/contributing/">contributing guide</a> if you'd like to help build any of it.</p>
 
