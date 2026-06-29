@@ -1158,6 +1158,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#encrypted-backups" class="md-nav__link">
+    <span class="md-ellipsis">
+      Encrypted backups
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1374,6 +1383,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#encrypted-backups" class="md-nav__link">
+    <span class="md-ellipsis">
+      Encrypted backups
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1430,8 +1448,17 @@ last-writer-wins; treat one device as the source of truth at a time.</p>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>python<span class="w"> </span>-m<span class="w"> </span>src.cli<span class="w"> </span>restore<span class="w"> </span>backup.json<span class="w"> </span>--apply<span class="w">    </span><span class="c1"># replace your data</span>
 </code></pre></div>
 <p>This is the engine behind the planned <a href="https://github.com/Leyline-Coding/scryme/issues/49">desktop app</a>'s
-backup story. Encrypting backups with a passphrase is tracked separately
-(<a href="https://github.com/Leyline-Coding/scryme/issues/114">#114</a>).</p>
+backup story.</p>
+<h2 id="encrypted-backups">Encrypted backups</h2>
+<p>Add a <strong>passphrase</strong> to encrypt a backup. On the download form, type a passphrase to get an
+encrypted <code>.enc.json</code> file; from the CLI, <code>python -m src.cli backup --passphrase &lt;pass&gt;</code>. The file
+is a small envelope — the JSON is encrypted with Fernet (AES-128 + HMAC) under a key derived from
+your passphrase via PBKDF2-HMAC-SHA256, so nothing is readable without it.</p>
+<p>Restoring an encrypted backup asks for the passphrase (a field on the restore form, or
+<code>restore --passphrase &lt;pass&gt;</code>); a wrong passphrase or a tampered file fails cleanly without touching
+your data. For <strong>scheduled/on-disk</strong> backups, set <code>SCRYME_BACKUP_PASSPHRASE</code> and every written
+backup is encrypted automatically (and restore from disk uses it).</p>
+<p><strong>There's no recovery if you lose the passphrase</strong> — keep it somewhere safe.</p>
 
 
 

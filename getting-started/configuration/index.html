@@ -1442,6 +1442,11 @@ with <code>SCRYME_</code>.</p>
 <td>How many on-disk backups to retain (older ones are pruned)</td>
 </tr>
 <tr>
+<td><code>SCRYME_BACKUP_PASSPHRASE</code></td>
+<td><em>(unset)</em></td>
+<td>If set, scheduled/on-disk backups are <a href="../../features/backup/#encrypted-backups">encrypted</a> with this passphrase (restore needs it)</td>
+</tr>
+<tr>
 <td><code>SCRYME_API_TOKEN</code></td>
 <td><em>(unset)</em></td>
 <td>If set, the <a href="../../development/api/">JSON API</a> requires this token (<code>Authorization: Bearer …</code> / <code>X-API-Key</code>); empty = open</td>
