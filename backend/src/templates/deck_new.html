@@ -8,6 +8,32 @@
     <a href="/collection?tab=decks" class="ml-auto text-sm text-muted hover:text-fg">Decks →</a>
   </header>
 
+  {% if error %}
+  <div class="mb-4 rounded-lg border border-rose-700 bg-rose-950/50 px-4 py-3 text-rose-200">
+    {{ error }}
+  </div>
+  {% endif %}
+
+  {# Import from a URL (#98) #}
+  <form action="/decks/import-url" method="post" class="mb-6 rounded-lg border border-edge bg-surface p-4"
+        x-data="{ busy: false }" @submit="busy = true">
+    <label class="block">
+      <span class="text-sm font-medium">Import from a URL</span>
+      <span class="block text-xs text-muted mb-1">Paste a {{ supported }} deck link.</span>
+      <div class="flex gap-2">
+        <input type="url" name="url" required value="{{ url or '' }}"
+          placeholder="https://www.moxfield.com/decks/…"
+          class="flex-1 rounded-lg bg-surface-2 border border-edge px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent" />
+        <button type="submit" :disabled="busy"
+          class="rounded-lg bg-accent text-accent-fg px-4 py-2 font-medium hover:opacity-90 disabled:opacity-60 disabled:cursor-wait">
+          <span x-show="!busy">Fetch</span><span x-show="busy" x-cloak>Fetching…</span>
+        </button>
+      </div>
+    </label>
+  </form>
+
+  <p class="text-xs text-muted mb-3">— or paste a list —</p>
+
   <form action="/decks" method="post" class="space-y-4">
     <label class="block">
       <span class="text-sm">Deck name</span>
