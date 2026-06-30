@@ -33,6 +33,12 @@ The MVP plus a steady stream of post-MVP features:
   binder**; **custom checklists**.
 - **[Saved-search alerts](search/advanced.md)** — after each card-data update, saved searches
   surface cards that newly match (with a "What's new" panel and desktop notifications).
+- **Build a deck from your collection** — pick a commander you own and get a 99-card singleton deck
+  drawn from cards you have, balanced across roles.
+- **Price watchlist** — set a per-card USD target and get alerted (badge, home panel, desktop
+  notification) when the price crosses it.
+- **Import a deck from a URL** — paste a Moxfield / Archidekt / TappedOut link.
+- **Undo last import** — one-click restore of the collection from just before a confirmed import.
 - A versioned **JSON/REST API** (`/api/v1`) and **Prometheus metrics** (`/metrics`).
 - **[Desktop app](getting-started/desktop.md)** — a native macOS/Windows/Linux build (see below).
 - **Physical-only** — Arena/MTGO-only cards are excluded; scryme is for paper collections.
@@ -57,12 +63,9 @@ Tracked as open issues — roughly in priority order:
 
 | Issue | Feature |
 | --- | --- |
-| [#59](https://github.com/Leyline-Coding/scryme/issues/59) | Undo last import (pre-merge snapshot + one-click restore) |
 | [#68](https://github.com/Leyline-Coding/scryme/issues/68) | Mobile-responsive pass |
-| [#87](https://github.com/Leyline-Coding/scryme/issues/87) | Build a deck from your collection |
-| [#88](https://github.com/Leyline-Coding/scryme/issues/88) | Price watchlist with thresholds |
 | [#80](https://github.com/Leyline-Coding/scryme/issues/80) | Read-only share links for decks/binders |
-| [#98](https://github.com/Leyline-Coding/scryme/issues/98) | Import a deck from a URL |
+| [#97](https://github.com/Leyline-Coding/scryme/issues/97) | Sell list + valuation report |
 | [#100](https://github.com/Leyline-Coding/scryme/issues/100) | Deck diff / versions |
 | [#101](https://github.com/Leyline-Coding/scryme/issues/101) | Duplicate / merge stacks |
 
