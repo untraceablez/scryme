@@ -1,62 +1,221 @@
-"""Seed sample data for the public demo.
+"""Seed a rich sample collection for the public demo.
 
-Marks a handful of already-ingested cards as owned (so the demo shows a populated, searchable
-collection) and creates a few example decks. Run after ingesting card data; intended to be paired
-with SCRYME_READ_ONLY=true. Both steps are idempotent — safe to re-run on every restart.
+Builds a ~6,000-card collection from already-ingested cards with a deliberate spread — colour
+balance, a 50/50 split around $5, and a sampling of each format's banned list (plus Vintage's
+restricted list) — so the demo shows off search, stats, decks, and price tracking at a realistic
+scale. The collection is dated to 2019 (with synthesized monthly price history) so the value-over
+-time and acquisition P/L views have years of data to display.
+
+Run after ingesting card data; pair with SCRYME_READ_ONLY=true. Every step is idempotent — safe to
+re-run on each restart (it skips when the demo collection is already populated).
 """
 
 from __future__ import annotations
 
+import datetime
+import random
 from pathlib import Path
 
 import structlog
-from sqlalchemy import func, select
+from sqlalchemy import Float, and_, cast, func, select
 
 from src.db import SessionLocal
 from src.decks import create_deck
-from src.models import Card, CollectionCard, Deck
+from src.models import Card, CardPricePoint, CollectionCard, Deck, PriceSnapshot
 
 log = structlog.get_logger()
 
-DEFAULT_LIMIT = 60
+DEFAULT_LIMIT = 6000  # retained for the CLI flag; the curated build uses its own targets
 _DECK_DIR = Path(__file__).resolve().parent / "seed_data" / "decks"
-# Display name -> decklist file. Example decks shown on the demo.
 EXAMPLE_DECKS = {
     "Heavenly Inferno (Commander)": "heavenly_inferno.txt",
     "Elves (Duel Decks)": "elves.txt",
     "Goblins (Duel Decks)": "goblins.txt",
 }
 
+# Collection shape.
+MONO_COLORS = {"W": 1000, "U": 1000, "B": 1000, "R": 1000, "G": 1000}
+COLORLESS_TARGET = 500
+MULTI_TARGET = 500
+PRICE_SPLIT = 5.0  # roughly half the collection at/above $5, half below
+
+# At least this many cards from each format's banned list, plus Vintage's restricted list.
+BANNED_FORMATS = [
+    "standard", "pioneer", "modern", "legacy", "vintage", "commander", "pauper", "brawl",
+]
+MIN_BANNED = 3
+MIN_RESTRICTED = 6  # restricted is a Vintage concept; Legacy uses a banned list (covered above)
+
+IMPORT_YEAR = 2019
+_SEED_GUARD = 5000  # consider the demo already built when this many demo cards exist
+
+_USD = cast(Card.prices["usd"].astext, Float)
+
+
+async def _take(session, where, count: int, used: set, out: list) -> None:
+    """Pick up to ``count`` distinct cards matching ``where``, ~50/50 around $5."""
+    if count <= 0:
+        return
+    below = count // 2
+    bands = [(_USD >= PRICE_SPLIT, count - below), (and_(_USD > 0, _USD < PRICE_SPLIT), below)]
+    for band, want in bands:
+        if want <= 0:
+            continue
+        rows = (
+            await session.execute(
+                select(Card.scryfall_id, Card.oracle_id, _USD)
+                .where(where, band)
+                .order_by(func.random())
+                .limit(want * 4 + 50)
+            )
+        ).all()
+        got = 0
+        for sid, oracle, usd in rows:
+            key = oracle or sid
+            if key in used:
+                continue
+            used.add(key)
+            out.append((sid, float(usd) if usd else 0.0))
+            got += 1
+            if got >= want:
+                break
+
+
+async def _ensure_status(session, fmt: str, status: str, count: int, used: set, out: list) -> None:
+    """Guarantee at least ``count`` cards with ``legalities[fmt] == status`` are owned."""
+    rows = (
+        await session.execute(
+            select(Card.scryfall_id, Card.oracle_id, _USD)
+            .where(Card.legalities[fmt].astext == status)
+            .order_by(func.random())
+            .limit(count * 5 + 20)
+        )
+    ).all()
+    have = 0
+    for sid, oracle, usd in rows:
+        key = oracle or sid
+        if key in used:
+            have += 1  # already in the collection — counts toward the guarantee
+        else:
+            used.add(key)
+            out.append((sid, float(usd) if usd else 0.0))
+            have += 1
+        if have >= count:
+            break
+
+
+def _import_date(rng: random.Random) -> datetime.datetime:
+    """A random day in the import year (2019), so the collection looks gradually acquired."""
+    return datetime.datetime(
+        IMPORT_YEAR, rng.randint(1, 12), rng.randint(1, 28),
+        rng.randint(0, 23), rng.randint(0, 59), tzinfo=datetime.UTC,
+    )
+
+
+def _month_starts(start: datetime.datetime, end: datetime.datetime) -> list[datetime.datetime]:
+    out, y, m = [], start.year, start.month
+    while (y, m) <= (end.year, end.month):
+        out.append(datetime.datetime(y, m, 1, tzinfo=datetime.UTC))
+        m += 1
+        if m > 12:
+            m, y = 1, y + 1
+    return out
+
+
+async def _seed_price_history(session, cards: list, rng: random.Random) -> None:
+    """Synthesize monthly value snapshots from 2019 → now so the value chart has real history.
+
+    The two most recent months also get per-card points so the "biggest movers" view works in the
+    read-only demo (where the live scheduler doesn't run).
+    """
+    if await session.scalar(select(func.count()).select_from(PriceSnapshot)):
+        return
+    current_total = sum(usd for _, usd in cards)
+    months = _month_starts(
+        datetime.datetime(IMPORT_YEAR, 1, 1, tzinfo=datetime.UTC),
+        datetime.datetime.now(datetime.UTC),
+    )
+    n = len(months)
+    snaps: list[PriceSnapshot] = []
+    for i, when in enumerate(months):
+        if when.year == IMPORT_YEAR:
+            # The collection is being imported through 2019: value ramps up.
+            factor = 0.1 + 0.6 * ((i + 1) / 12)
+        else:
+            # Afterward, steady appreciation toward the current value.
+            post = (i - 11) / max(1, n - 12)
+            factor = 0.7 + 0.35 * post
+        value = current_total * factor * rng.uniform(0.96, 1.04)
+        snaps.append(
+            PriceSnapshot(captured_at=when, total_usd=round(value, 2), card_count=len(cards))
+        )
+    session.add_all(snaps)
+    await session.flush()
+
+    # Per-card points for the last two months → movers has something to compare.
+    if len(snaps) >= 2:
+        prev, last = snaps[-2], snaps[-1]
+        for sid, usd in cards:
+            if usd <= 0:
+                continue
+            session.add(CardPricePoint(snapshot_id=last.id, scryfall_id=sid, usd=round(usd, 2)))
+            session.add(
+                CardPricePoint(
+                    snapshot_id=prev.id, scryfall_id=sid,
+                    usd=round(usd * rng.uniform(0.8, 1.15), 2),
+                )
+            )
+
 
 async def seed_demo(limit: int = DEFAULT_LIMIT) -> int:
-    """Add up to ``limit`` ingested cards to the collection. Idempotent: skips if already seeded."""
+    """Build the curated demo collection. Idempotent: skips when already populated."""
+    rng = random.Random(IMPORT_YEAR)  # deterministic selection/dates
     async with SessionLocal() as session:
         existing = await session.scalar(
             select(func.count())
             .select_from(CollectionCard)
             .where(CollectionCard.source_format == "demo")
         )
-        if existing >= limit:
+        if existing >= _SEED_GUARD:
             log.info("demo.seed_skipped", reason="already seeded", collection_size=existing)
             return 0
 
-        owned = select(CollectionCard.scryfall_id)
-        cards = (
+        # Track what's already owned by the same key used during selection (oracle, else printing),
+        # so re-runs don't add duplicates.
+        owned = (
             await session.execute(
-                select(Card)
-                .where(Card.scryfall_id.not_in(owned))
-                .order_by(Card.name)
-                .limit(limit - existing)
+                select(Card.oracle_id, Card.scryfall_id).join(
+                    CollectionCard, CollectionCard.scryfall_id == Card.scryfall_id
+                )
             )
-        ).scalars().all()
-        for card in cards:
+        ).all()
+        used: set = {oracle or sid for oracle, sid in owned}
+        out: list = []
+
+        for color, target in MONO_COLORS.items():
+            await _take(session, Card.colors == [color], target, used, out)
+        await _take(session, func.coalesce(func.array_length(Card.colors, 1), 0) == 0,
+                    COLORLESS_TARGET, used, out)
+        await _take(session, func.array_length(Card.colors, 1) >= 2, MULTI_TARGET, used, out)
+
+        for fmt in BANNED_FORMATS:
+            await _ensure_status(session, fmt, "banned", MIN_BANNED, used, out)
+        await _ensure_status(session, "vintage", "restricted", MIN_RESTRICTED, used, out)
+
+        for sid, usd in out:
             session.add(
-                CollectionCard(scryfall_id=card.scryfall_id, quantity=1, source_format="demo")
+                CollectionCard(
+                    scryfall_id=sid, quantity=1, source_format="demo",
+                    added_at=_import_date(rng),
+                    purchase_price=round(usd * rng.uniform(0.4, 1.1), 2) if usd else None,
+                )
             )
+        await session.flush()
+        await _seed_price_history(session, out, rng)
         await session.commit()
         total = await session.scalar(select(func.count()).select_from(CollectionCard))
-    log.info("demo.seeded", added=len(cards), collection_size=total)
-    return len(cards)
+    log.info("demo.seeded", added=len(out), collection_size=total)
+    return len(out)
 
 
 async def seed_demo_decks() -> int:

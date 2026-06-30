@@ -61,7 +61,7 @@ spec:
               else
                 echo "cards already present ($CARDS); skipping ingest"
               fi
-              python -m src.cli seed-demo --limit 60
+              python -m src.cli seed-demo
           envFrom:
             - configMapRef:
                 name: scryme-demo-config
