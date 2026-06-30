@@ -27,12 +27,15 @@ interface that understands [Scryfall search syntax](https://scryfall.com/docs/sy
   grid/table toggle, clickable facets, "did you mean?" suggestions, saved searches (with **alerts**
   for cards that newly match after an update), and an advanced form builder.
 - 📥 **Import** from ManaBox, Dragon Shield, Delver Lens, Moxfield, and Archidekt — or any CSV via
-  the column-mapping wizard — with **replace / increment / per-card** merge on re-import.
+  the column-mapping wizard — with **replace / increment / per-card** merge on re-import and
+  **one-click undo** of the last import.
 - 🃏 **Rich card pages** — oracle text, prices, legalities, printings, rulings, real mana & set
-  symbols, tags (`tag:` search), and inline add/edit (plus bulk edit from results).
+  symbols, tags (`tag:` search), inline add/edit (plus bulk edit from results), and a **price
+  watchlist** (alert when a card crosses a USD target).
+- 🃏 **Decks** — coverage, format legality, stats, and export; **build a deck from your collection**
+  (commander → owned-card suggestion) or **import one from a Moxfield / Archidekt / TappedOut URL**.
 - 🧰 **Collection tools** — stats dashboard (value + growth over time), price history with
-  acquisition profit/loss, decks (coverage, legality, stats, export), set completion, custom
-  checklists, a wishlist, and a trade/surplus binder.
+  acquisition profit/loss, set completion, custom checklists, a wishlist, and a trade/surplus binder.
 - 💱 **USD / EUR** price display and a themeable UI (preset themes + custom accent).
 - 💾 **Backup & restore** — a portable JSON dump of your data, with scheduled on-disk backups to a
   folder you choose (point it at a synced folder for cross-device backup).
