@@ -14,6 +14,7 @@ from src.currency import get_currency, info
 from src.db import get_session
 from src.deck_builder import BuildError, build_commander_deck, owned_commanders
 from src.deck_export import EXPORT_FORMATS, collect_export_cards, render_deck
+from src.deck_import import SUPPORTED, DeckImportError, fetch_deck_from_url
 from src.decks import LEGALITY_FORMATS, create_deck, deck_coverage, deck_stats
 from src.models import Deck
 from src.templating import templates
@@ -36,7 +37,24 @@ async def list_decks() -> RedirectResponse:
 @router.get("/decks/new", response_class=HTMLResponse)
 async def new_deck(request: Request) -> HTMLResponse:
     _guard_writable()
-    return templates.TemplateResponse(request, "deck_new.html", {})
+    return templates.TemplateResponse(request, "deck_new.html", {"supported": SUPPORTED})
+
+
+@router.post("/decks/import-url")
+async def import_url(
+    request: Request,
+    url: str = Form(""),
+    session: AsyncSession = Depends(get_session),
+):
+    _guard_writable()
+    try:
+        name, decklist = await fetch_deck_from_url(url.strip())
+    except DeckImportError as exc:
+        return templates.TemplateResponse(
+            request, "deck_new.html", {"supported": SUPPORTED, "error": str(exc), "url": url},
+        )
+    deck = await create_deck(session, name, decklist)
+    return RedirectResponse(url=f"/decks/{deck.id}", status_code=303)
 
 
 @router.post("/decks")
